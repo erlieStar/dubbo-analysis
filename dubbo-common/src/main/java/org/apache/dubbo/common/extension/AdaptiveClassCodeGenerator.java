@@ -195,9 +195,12 @@ public class AdaptiveClassCodeGenerator {
      * generate method content
      */
     private String generateMethodContent(Method method) {
+        // 取方法上的Adaptive注解
         Adaptive adaptiveAnnotation = method.getAnnotation(Adaptive.class);
         StringBuilder code = new StringBuilder(512);
+        // 方法上没有Adaptive注解
         if (adaptiveAnnotation == null) {
+            // 生成抛出异常的代码
             return generateUnsupported(method);
         } else {
             int urlTypeIndex = getUrlTypeIndex(method);

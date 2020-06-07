@@ -325,6 +325,16 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
     }
 
     public synchronized void export() {
+        // 检查及更新配置
+        // 配置存在的地方
+        // 1. xml
+        // 2. -D 系统配置
+        // 3. 配置中心-全局配置
+        // 4. 配置中心-app全局配置
+        // 5. dubbo.properties
+
+        // 1. 子节点覆盖父节点配置信息
+        // 2. 子节点取父节点配置信息
         checkAndUpdateSubConfigs();
 
         if (!shouldExport()) {

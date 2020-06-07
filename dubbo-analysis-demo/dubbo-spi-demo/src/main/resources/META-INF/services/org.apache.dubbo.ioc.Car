@@ -1,0 +1,2 @@
+benz=org.apache.dubbo.ioc.BenzCar
+bmw=org.apache.dubbo.ioc.BMWCar

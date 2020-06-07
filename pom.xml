@@ -146,6 +146,7 @@
         <module>dubbo-metadata-report</module>
         <module>dubbo-configcenter</module>
         <module>dubbo-dependencies</module>
+        <module>dubbo-analysis-demo</module>
     </modules>
 
     <dependencyManagement>

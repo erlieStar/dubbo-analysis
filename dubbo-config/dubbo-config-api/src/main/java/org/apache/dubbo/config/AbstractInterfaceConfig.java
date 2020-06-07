@@ -260,6 +260,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
             }
             try {
                 Environment.getInstance().setConfigCenterFirst(configCenter.isHighestPriority());
+                // 更新配置的方法
                 Environment.getInstance().updateExternalConfigurationMap(parseProperties(configContent));
                 Environment.getInstance().updateAppExternalConfigurationMap(parseProperties(appConfigContent));
             } catch (IOException e) {

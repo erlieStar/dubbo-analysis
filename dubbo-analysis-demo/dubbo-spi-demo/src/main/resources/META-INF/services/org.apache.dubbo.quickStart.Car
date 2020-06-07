@@ -1,0 +1,2 @@
+benz=org.apache.dubbo.quickStart.BenzCar
+bmw=org.apache.dubbo.quickStart.BMWCar

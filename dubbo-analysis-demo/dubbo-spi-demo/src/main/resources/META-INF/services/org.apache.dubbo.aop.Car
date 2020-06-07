@@ -1,0 +1,2 @@
+benz=org.apache.dubbo.aop.BenzCar
+org.apache.dubbo.aop.CarWrapper

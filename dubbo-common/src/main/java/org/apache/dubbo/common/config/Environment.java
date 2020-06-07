@@ -33,6 +33,7 @@ public class Environment {
     private Map<String, PropertiesConfiguration> propertiesConfigs = new ConcurrentHashMap<>();
     private Map<String, SystemConfiguration> systemConfigs = new ConcurrentHashMap<>();
     private Map<String, EnvironmentConfiguration> environmentConfigs = new ConcurrentHashMap<>();
+    // 下面这2个配置存在配置中心
     private Map<String, InmemoryConfiguration> externalConfigs = new ConcurrentHashMap<>();
     private Map<String, InmemoryConfiguration> appExternalConfigs = new ConcurrentHashMap<>();
 
