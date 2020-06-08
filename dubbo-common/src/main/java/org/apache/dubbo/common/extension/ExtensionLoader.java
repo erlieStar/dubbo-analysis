@@ -340,8 +340,8 @@ public class ExtensionLoader<T> {
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("Extension name == null");
         }
-        // @SPI注解的value值为默认值
         if ("true".equals(name)) {
+            // 获取默认的扩展实现类
             return getDefaultExtension();
         }
         Holder<Object> holder = getOrCreateHolder(name);
@@ -350,7 +350,7 @@ public class ExtensionLoader<T> {
             synchronized (holder) {
                 instance = holder.get();
                 if (instance == null) {
-                    // 创建扩展点，即实现类
+                    // 创建扩展实例
                     instance = createExtension(name);
                     holder.set(instance);
                 }
@@ -526,6 +526,7 @@ public class ExtensionLoader<T> {
 
     @SuppressWarnings("unchecked")
     private T createExtension(String name) {
+        // 从配置文件中加载所有的扩展类
         // clazz为name对应的实现类
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null) {
@@ -534,12 +535,13 @@ public class ExtensionLoader<T> {
         try {
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
+                // putIfAbsent方法，key值已存在，则value值依旧为原来的，不进行覆盖
                 EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
             // 执行IOC
             injectExtension(instance);
-            // 获取包装类
+            // 执行AOP
             Set<Class<?>> wrapperClasses = cachedWrapperClasses;
             if (CollectionUtils.isNotEmpty(wrapperClasses)) {
                 for (Class<?> wrapperClass : wrapperClasses) {
@@ -557,6 +559,7 @@ public class ExtensionLoader<T> {
     private T injectExtension(T instance) {
         try {
             if (objectFactory != null) {
+                // 遍历目标类所有方法
                 for (Method method : instance.getClass().getMethods()) {
                     if (isSetter(method)) {
                         /**
@@ -628,11 +631,13 @@ public class ExtensionLoader<T> {
     }
 
     private Map<String, Class<?>> getExtensionClasses() {
+        // 从缓存中获取已经加载的实现类
         Map<String, Class<?>> classes = cachedClasses.get();
         if (classes == null) {
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
                 if (classes == null) {
+                    // 加载实现类
                     classes = loadExtensionClasses();
                     cachedClasses.set(classes);
                 }
@@ -663,6 +668,7 @@ public class ExtensionLoader<T> {
      * extract and cache default extension name if exists
      */
     private void cacheDefaultExtensionName() {
+        // type在调用 getExtensionLoader 方法时传入
         final SPI defaultAnnotation = type.getAnnotation(SPI.class);
         if (defaultAnnotation != null) {
             String value = defaultAnnotation.value();
@@ -674,6 +680,7 @@ public class ExtensionLoader<T> {
                             + ": " + Arrays.toString(names));
                 }
                 if (names.length == 1) {
+                    // 设置默认名称，参考 getDefaultExtension 方法
                     cachedDefaultName = names[0];
                 }
             }
@@ -681,6 +688,7 @@ public class ExtensionLoader<T> {
     }
 
     private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type) {
+        // fileName = 文件夹路径 + type全限定名
         String fileName = dir + type;
         try {
             Enumeration<java.net.URL> urls;

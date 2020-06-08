@@ -12,10 +12,10 @@ public class DubboSpiIocDemo {
         ExtensionLoader<Car> extensionLoader = ExtensionLoader.getExtensionLoader(Car.class);
         Car car = extensionLoader.getExtension("benz");
         Map<String, String> map = new HashMap<>();
-        map.put("car", "bmw");
+        map.put("wheel", "benz");
         URL url = new URL("", "", 1, map);
-        // benz
-        // bmw
+        // benzCar
+        // benzWheel
         car.getBrandByUrl(url);
     }
 }

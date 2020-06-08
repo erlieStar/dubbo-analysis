@@ -7,6 +7,5 @@ import org.apache.dubbo.common.extension.SPI;
 @SPI
 public interface Car {
 
-    @Adaptive("car")
     void getBrandByUrl(URL url);
 }
