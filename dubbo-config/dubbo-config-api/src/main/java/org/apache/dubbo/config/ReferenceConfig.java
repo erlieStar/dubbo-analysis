@@ -251,6 +251,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
     }
 
     private void init() {
+        // 避免重复初始化
         if (initialized) {
             return;
         }
@@ -261,12 +262,15 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
         map.put(Constants.SIDE_KEY, Constants.CONSUMER_SIDE);
         appendRuntimeParameters(map);
+        // 非泛化服务
         if (!isGeneric()) {
+            // 获取版本
             String revision = Version.getVersion(interfaceClass, version);
             if (revision != null && revision.length() > 0) {
                 map.put("revision", revision);
             }
 
+            // 获取接口方法列表，并添加到map中
             String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames();
             if (methods.length == 0) {
                 logger.warn("No method found in service interface " + interfaceClass.getName());
@@ -276,6 +280,8 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
             }
         }
         map.put(Constants.INTERFACE_KEY, interfaceName);
+        // 将 ApplicationConfig, ModuleConfig, ConsumerConfig, ReferenceConfig 等对象的字段信息添加到 map 中
+        // 为了处理配置的优先级
         appendParameters(map, application);
         appendParameters(map, module);
         appendParameters(map, consumer, Constants.DEFAULT_KEY);

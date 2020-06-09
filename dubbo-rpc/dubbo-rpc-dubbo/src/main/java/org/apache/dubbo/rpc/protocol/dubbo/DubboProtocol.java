@@ -395,6 +395,7 @@ public class DubboProtocol extends AbstractProtocol {
     private ExchangeClient[] getClients(URL url) {
         // whether to share connection
 
+        // 是否共享连接
         boolean useShareConnect = false;
 
         int connections = url.getParameter(Constants.CONNECTIONS_KEY, 0);
@@ -415,9 +416,11 @@ public class DubboProtocol extends AbstractProtocol {
         ExchangeClient[] clients = new ExchangeClient[connections];
         for (int i = 0; i < clients.length; i++) {
             if (useShareConnect) {
+                // 获取共享客户端
                 clients[i] = shareClients.get(i);
 
             } else {
+                // 初始化新的客户端
                 clients[i] = initClient(url);
             }
         }
