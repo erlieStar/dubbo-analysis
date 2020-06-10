@@ -59,6 +59,27 @@ public interface Filter {
      * @throws RpcException
      * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
      */
+
+    /**
+     * 1. 用户自定义 filter 默认在内置 filter 之后。
+     * 2. 特殊值 default，表示缺省扩展点插入的位置。比如：filter="xxx,default,yyy"，表示 xxx 在缺省 filter 之前，yyy 在缺省 filter 之后。
+     * 3. 特殊符号 -，表示剔除。比如：filter="-foo1"，剔除添加缺省扩展点 foo1。比如：filter="-default"，剔除添加所有缺省扩展点。
+     * 4. provider 和 service 同时配置的 filter 时，累加所有 filter，而不是覆盖。
+     * 比如：<dubbo:provider filter="xxx,yyy"/> 和 <dubbo:service filter="aaa,bbb" />，
+     * 则 xxx,yyy,aaa,bbb 均会生效。如果要覆盖，需配置：<dubbo:service filter="-xxx,-yyy,aaa,bbb" />
+     */
+
+
+    /**
+     * <!-- 消费方调用过程拦截 -->
+     * <dubbo:reference filter="xxx,yyy" />
+     * <!-- 消费方调用过程缺省拦截器，将拦截所有reference -->
+     * <dubbo:consumer filter="xxx,yyy"/>
+     * <!-- 提供方调用过程拦截 -->
+     * <dubbo:service filter="xxx,yyy" />
+     * <!-- 提供方调用过程缺省拦截器，将拦截所有service -->
+     * <dubbo:provider filter="xxx,yyy"/>
+     */
     Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException;
 
     default Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {

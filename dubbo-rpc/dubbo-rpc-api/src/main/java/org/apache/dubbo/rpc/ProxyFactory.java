@@ -23,6 +23,7 @@ import org.apache.dubbo.common.extension.SPI;
 
 /**
  * ProxyFactory. (API/SPI, Singleton, ThreadSafe)
+ * 将 Invoker 接口转换成业务接口
  */
 @SPI("javassist")
 public interface ProxyFactory {

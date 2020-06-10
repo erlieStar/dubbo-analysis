@@ -44,7 +44,7 @@ public class Application {
         @Bean
         public RegistryConfig registryConfig() {
             RegistryConfig registryConfig = new RegistryConfig();
-            registryConfig.setAddress("multicast://224.5.6.7:1234");
+            registryConfig.setAddress("zookeeper://myhost:2181");
             return registryConfig;
         }
     }
