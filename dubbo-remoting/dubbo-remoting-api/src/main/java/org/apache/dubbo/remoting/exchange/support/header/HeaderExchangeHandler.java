@@ -79,6 +79,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
     void handleRequest(final ExchangeChannel channel, Request req) throws RemotingException {
         Response res = new Response(req.getId(), req.getVersion());
+        // 检测请求是否合法，不合法则返回状态码为 BAD_REQUEST 的响应
         if (req.isBroken()) {
             Object data = req.getData();
 
@@ -97,6 +98,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
             return;
         }
         // find handler by message class.
+        // 获取 data 字段值，也就是 RpcInvocation 对象
         Object msg = req.getData();
         try {
             // handle data.
@@ -190,21 +192,27 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());
         final ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
         try {
+            // 处理请求对象
             if (message instanceof Request) {
                 // handle request.
                 Request request = (Request) message;
+                // 处理事件
                 if (request.isEvent()) {
                     handlerEvent(channel, request);
                 } else {
+                    // 双向通信
                     if (request.isTwoWay()) {
+                        // 向后调用服务，并得到调用结果
                         handleRequest(exchangeChannel, request);
                     } else {
+                        // 将调用结果返回给服务消费端
                         handler.received(exchangeChannel, request.getData());
                     }
                 }
             } else if (message instanceof Response) {
                 handleResponse(channel, (Response) message);
             } else if (message instanceof String) {
+                // telnet相关
                 if (isClientSide(channel)) {
                     Exception e = new Exception("Dubbo client can not supported string message: " + message + " in channel: " + channel + ", url: " + channel.getUrl());
                     logger.error(e.getMessage(), e);

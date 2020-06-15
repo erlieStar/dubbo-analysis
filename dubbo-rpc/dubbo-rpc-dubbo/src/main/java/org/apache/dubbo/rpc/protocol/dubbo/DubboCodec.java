@@ -172,18 +172,23 @@ public class DubboCodec extends ExchangeCodec {
     protected void encodeRequestData(Channel channel, ObjectOutput out, Object data, String version) throws IOException {
         RpcInvocation inv = (RpcInvocation) data;
 
+        // 依次序列化 dubbo version、path、version
         out.writeUTF(version);
         out.writeUTF(inv.getAttachment(Constants.PATH_KEY));
         out.writeUTF(inv.getAttachment(Constants.VERSION_KEY));
 
+        // 序列化调用方法名
         out.writeUTF(inv.getMethodName());
+        // 将参数类型转换为字符串，并进行序列化
         out.writeUTF(ReflectUtils.getDesc(inv.getParameterTypes()));
         Object[] args = inv.getArguments();
         if (args != null) {
             for (int i = 0; i < args.length; i++) {
+                // 对运行时参数进行序列化
                 out.writeObject(encodeInvocationArgument(channel, inv, i));
             }
         }
+        // 序列化 attachments
         out.writeObject(RpcUtils.getNecessaryAttachments(inv));
     }
 

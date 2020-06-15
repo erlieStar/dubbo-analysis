@@ -55,6 +55,7 @@ public class ChannelEventRunnable implements Runnable {
         // 检测通道状态，对于请求或响应消息，此时 state = RECEIVED
         if (state == ChannelState.RECEIVED) {
             try {
+                // 将 channel 和 message 传给 ChannelHandler 对象，进行后续的调用
                 handler.received(channel, message);
             } catch (Exception e) {
                 logger.warn("ChannelEventRunnable handle " + state + " operation error, channel is " + channel

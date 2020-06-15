@@ -110,6 +110,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
             } else {
                 // 同步调用
                 RpcContext.getContext().setFuture(null);
+                // 发送请求，得到一个 ResponseFuture 实例，并调用该实例的 get 方法进行等待
                 return (Result) currentClient.request(inv, timeout).get();
             }
         } catch (TimeoutException e) {
