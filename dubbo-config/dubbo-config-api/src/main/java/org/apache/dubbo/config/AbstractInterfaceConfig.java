@@ -437,10 +437,11 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
      *                       side, it is the {@link Class} of the remote service interface that will be referenced
      */
     void checkMock(Class<?> interfaceClass) {
+        // 没设置mock，则直接返回
         if (ConfigUtils.isEmpty(mock)) {
             return;
         }
-
+        // 获取格式化mock方式
         String normalizedMock = MockInvoker.normalizeMock(mock);
         if (normalizedMock.startsWith(Constants.RETURN_PREFIX)) {
             normalizedMock = normalizedMock.substring(Constants.RETURN_PREFIX.length()).trim();
@@ -464,6 +465,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
             }
         } else {
             //Check whether the mock class is a implementation of the interfaceClass, and if it has a default constructor
+            // 检查mock接口的实现类是否符合规则
             MockInvoker.getMockObject(normalizedMock, interfaceClass);
         }
     }

@@ -40,7 +40,7 @@ import java.util.Set;
  * Note that retry causes latency.
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Failover">Failover</a>
- *
+ * 失败重试
  */
 public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
@@ -70,9 +70,12 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
             //Reselect before retry to avoid a change of candidate `invokers`.
             //NOTE: if `invokers` changed, then `invoked` also lose accuracy.
             if (i > 0) {
+                // 当前实例已经被销毁，则抛出异常
                 checkWhetherDestroyed();
+                // 重新获取服务提供者
                 copyInvokers = list(invocation);
                 // check again
+                // 重新检查一下
                 checkInvokers(copyInvokers, invocation);
             }
             // 通过负载均衡选择 Invoker
@@ -80,6 +83,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
             invoked.add(invoker);
             RpcContext.getContext().setInvokers((List) invoked);
             try {
+                // 发起远程调用
                 Result result = invoker.invoke(invocation);
                 if (le != null && logger.isWarnEnabled()) {
                     logger.warn("Although retry the method " + methodName

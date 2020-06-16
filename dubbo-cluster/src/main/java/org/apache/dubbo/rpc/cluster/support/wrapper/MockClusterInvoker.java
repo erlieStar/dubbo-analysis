@@ -71,6 +71,7 @@ public class MockClusterInvoker<T> implements Invoker<T> {
         Result result = null;
         // 获取 mock 配置值
         String value = directory.getUrl().getMethodParameter(invocation.getMethodName(), Constants.MOCK_KEY, Boolean.FALSE.toString()).trim();
+        // 如果没有，或者值为默认的false
         if (value.length() == 0 || value.equalsIgnoreCase("false")) {
             //no mock
             // 无 mock 逻辑，直接调用其他 Invoker 对象的 invoke 方法，
@@ -87,6 +88,7 @@ public class MockClusterInvoker<T> implements Invoker<T> {
             //fail-mock
             // fail:xxx 表示消费方对调用服务失败后，再执行 mock 逻辑，不抛出异常
             try {
+                // 发起远程rpc，成功则不会执行mock操作，否则执行doMockInvoke
                 result = this.invoker.invoke(invocation);
             } catch (RpcException e) {
                 if (e.isBiz()) {

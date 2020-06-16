@@ -454,6 +454,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         appendParameters(map, provider, Constants.DEFAULT_KEY);
         appendParameters(map, protocolConfig);
         appendParameters(map, this);
+        // 解析 MethodConfig 配置
         if (CollectionUtils.isNotEmpty(methods)) {
             for (MethodConfig method : methods) {
                 appendParameters(map, method, method.getName());
@@ -510,6 +511,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             } // end of methods for
         }
 
+        // 如果为泛型调用，设置泛型类型
         if (ProtocolUtils.isGeneric(generic)) {
             map.put(Constants.GENERIC_KEY, generic);
             map.put(Constants.METHODS_KEY, Constants.ANY_VALUE);
@@ -540,6 +542,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         // export service
         String host = this.findConfigedHosts(protocolConfig, registryURLs, map);
         Integer port = this.findConfigedPorts(protocolConfig, name, map);
+        // 拼接url对象
         URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map);
 
         if (ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
@@ -550,17 +553,21 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
         String scope = url.getParameter(Constants.SCOPE_KEY);
         // don't export when none is configured
+        // 不导出服务
         if (!Constants.SCOPE_NONE.equalsIgnoreCase(scope)) {
 
             // export to local if the config is not remote (export to remote only when config is remote)
+            // 导出本地服务
             if (!Constants.SCOPE_REMOTE.equalsIgnoreCase(scope)) {
                 exportLocal(url);
             }
             // export to remote if the config is not local (export to local only when config is local)
+            // 导出远程服务
             if (!Constants.SCOPE_LOCAL.equalsIgnoreCase(scope)) {
                 if (logger.isInfoEnabled()) {
                     logger.info("Export dubbo service " + interfaceClass.getName() + " to url " + url);
                 }
+                // 如果有服务注册中心地址
                 if (CollectionUtils.isNotEmpty(registryURLs)) {
                     for (URL registryURL : registryURLs) {
                         url = url.addParameterIfAbsent(Constants.DYNAMIC_KEY, registryURL.getParameter(Constants.DYNAMIC_KEY));
@@ -585,6 +592,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                         exporters.add(exporter);
                     }
                 } else {
+                    // 直连方式
                     Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, url);
                     DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
 
@@ -595,6 +603,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                  * @since 2.7.0
                  * ServiceData Store
                  */
+                // 元数据存储
                 MetadataReportService metadataReportService = null;
                 if ((metadataReportService = getMetadataReportService()) != null) {
                     metadataReportService.publishProvider(url);
@@ -607,6 +616,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void exportLocal(URL url) {
         if (!Constants.LOCAL_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
+            // 显示指定injvm协议进行暴露
             URL local = URLBuilder.from(url)
                     .setProtocol(Constants.LOCAL_PROTOCOL)
                     .setHost(LOCALHOST_VALUE)
