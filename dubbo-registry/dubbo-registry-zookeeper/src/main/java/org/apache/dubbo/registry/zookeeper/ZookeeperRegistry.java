@@ -259,9 +259,11 @@ public class ZookeeperRegistry extends FailbackRegistry {
         List<URL> urls = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(providers)) {
             for (String provider : providers) {
+                // 遍历所有的服务列表，并解码特殊字符
                 provider = URL.decode(provider);
                 if (provider.contains(Constants.PROTOCOL_SEPARATOR)) {
                     URL url = URL.valueOf(provider);
+                    // 根据接口，category，版本和分组过滤
                     if (UrlUtils.isMatch(consumer, url)) {
                         urls.add(url);
                     }
