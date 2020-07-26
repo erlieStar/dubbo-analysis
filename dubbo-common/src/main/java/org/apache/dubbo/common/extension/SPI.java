@@ -58,6 +58,7 @@ public @interface SPI {
 
     /**
      * default extension name
+     * 默认实现的key名称
      */
     String value() default "";
 

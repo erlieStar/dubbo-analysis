@@ -94,6 +94,8 @@ public class AccessLogFilter implements Filter {
      * @param inv     Invocation service method.
      * @return Result from service method.
      * @throws RpcException
+     *
+     * 调用过程
      */
     @Override
     public Result invoke(Invoker<?> invoker, Invocation inv) throws RpcException {

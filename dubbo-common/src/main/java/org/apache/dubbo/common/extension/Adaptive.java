@@ -29,6 +29,8 @@ import java.lang.annotation.Target;
  *
  * @see ExtensionLoader
  * @see URL
+ *
+ * 扩展点自适应注解
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

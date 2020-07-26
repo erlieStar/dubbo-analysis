@@ -44,6 +44,14 @@ public class ProtocolFilterWrapper implements Protocol {
         this.protocol = protocol;
     }
 
+    /**
+     *
+     * @param invoker
+     * @param key
+     * @param group 通过传入 Constants.PROVIDER 或 Constants.CONSUMER 来表明是生产端的调用链，还是消费端的调用链
+     * @param <T>
+     * @return
+     */
     private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) {
         Invoker<T> last = invoker;
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
@@ -70,7 +78,9 @@ public class ProtocolFilterWrapper implements Protocol {
 
                     @Override
                     public Result invoke(Invocation invocation) throws RpcException {
+                        // filter 不断的套在 Invoker 上，调用invoke方法的时候就会执行filter的invoke方法
                         Result result = filter.invoke(next, invocation);
+                        // 对同步调用和异步调用的处理
                         if (result instanceof AsyncRpcResult) {
                             AsyncRpcResult asyncResult = (AsyncRpcResult) result;
                             asyncResult.thenApplyWithContext(r -> filter.onResponse(r, invoker, invocation));

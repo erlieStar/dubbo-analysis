@@ -49,6 +49,9 @@ public @interface Activate {
      *
      * @return group names to match
      * @see ExtensionLoader#getActivateExtension(URL, String, String)
+     *
+     * url分组如果匹配则激活，可以设置多个
+     * 例如可以通过设置group为Constants.provider来表明这个扩展点只对服务提供者起作用
      */
     String[] group() default {};
 
@@ -62,6 +65,8 @@ public @interface Activate {
      * @return URL parameter keys
      * @see ExtensionLoader#getActivateExtension(URL, String)
      * @see ExtensionLoader#getActivateExtension(URL, String, String)
+     *
+     * url中含有该key值，则激活
      */
     String[] value() default {};
 
@@ -70,6 +75,8 @@ public @interface Activate {
      * Deprecated since 2.7.0
      *
      * @return extension list which should be put before the current one
+     *
+     * 哪些扩展点需要在本扩展点之前
      */
     @Deprecated
     String[] before() default {};
@@ -79,6 +86,8 @@ public @interface Activate {
      * Deprecated since 2.7.0
      *
      * @return extension list which should be put after the current one
+     *
+     * 哪些扩展点需要在本扩展点之后
      */
     @Deprecated
     String[] after() default {};
@@ -87,6 +96,8 @@ public @interface Activate {
      * Absolute ordering info, optional
      *
      * @return absolute ordering info
+     *
+     * 用来排序
      */
     int order() default 0;
 }

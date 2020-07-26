@@ -40,6 +40,10 @@ public interface Transporter {
      * @return server
      * @throws RemotingException
      * @see org.apache.dubbo.remoting.Transporters#bind(URL, ChannelHandler...)
+     *
+     * 当外部调用Transporter#bind方法时，会从URL中提取key为server的value，然后找对应的实现类，没找到再提取key为transporter的value
+     * 然后找实现类，如果还没找到，则报异常
+     * @Adaptive 可以进行多个实现类的依次匹配，如果都找不到则抛出异常
      */
     @Adaptive({Constants.SERVER_KEY, Constants.TRANSPORTER_KEY})
     Server bind(URL url, ChannelHandler handler) throws RemotingException;

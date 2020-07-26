@@ -74,6 +74,7 @@ public class SpringExtensionFactory implements ExtensionFactory {
             return null;
         }
 
+        // 遍历所有spring上下文，根据名字从spring容器中查找
         for (ApplicationContext context : contexts) {
             if (context.containsBean(name)) {
                 Object bean = context.getBean(name);
@@ -89,6 +90,7 @@ public class SpringExtensionFactory implements ExtensionFactory {
             return null;
         }
 
+        // 通过类型查找
         for (ApplicationContext context : contexts) {
             try {
                 return context.getBean(type);
