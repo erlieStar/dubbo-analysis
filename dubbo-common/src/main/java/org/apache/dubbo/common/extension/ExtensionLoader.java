@@ -84,6 +84,7 @@ public class ExtensionLoader<T> {
 
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
 
+    // 只有一个属性value，然后value为Map<String, Class<?>，key为定义的名字，value为对应的Class对象
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>();
@@ -93,7 +94,7 @@ public class ExtensionLoader<T> {
     private String cachedDefaultName;
     private volatile Throwable createAdaptiveInstanceError;
 
-    // 存放包装类
+    // 存放type对应的包装类
     private Set<Class<?>> cachedWrapperClasses;
 
     private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>();
@@ -125,7 +126,7 @@ public class ExtensionLoader<T> {
         // 如果不做缓存，则每次都会new
         ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         if (loader == null) {
-            // 这里会new一个ExtensionLoader
+            // 不存在就放，存在直接返回原来的，不覆盖
             EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));
             loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         }
@@ -166,6 +167,8 @@ public class ExtensionLoader<T> {
      * @param key url parameter key which used to get extension point names
      * @return extension list which are activated.
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String, String)
+     *
+     * 获取自动激活的扩展类
      */
     public List<T> getActivateExtension(URL url, String key) {
         return getActivateExtension(url, key, null);
@@ -191,9 +194,12 @@ public class ExtensionLoader<T> {
      * @param group group
      * @return extension list which are activated.
      * @see #getActivateExtension(org.apache.dubbo.common.URL, String[], String)
+     *
+     * 获取自动激活的扩展类
      */
     public List<T> getActivateExtension(URL url, String key, String group) {
         String value = url.getParameter(key);
+        // 用逗号分隔的key
         return getActivateExtension(url, StringUtils.isEmpty(value) ? null : Constants.COMMA_SPLIT_PATTERN.split(value), group);
     }
 
@@ -209,6 +215,7 @@ public class ExtensionLoader<T> {
     public List<T> getActivateExtension(URL url, String[] values, String group) {
         List<T> exts = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : Arrays.asList(values);
+        // url的参数中传入了-default，所有的默认@Activate都不会被激活
         if (!names.contains(Constants.REMOVE_VALUE_PREFIX + Constants.DEFAULT_KEY)) {
             getExtensionClasses();
             for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) {
@@ -217,6 +224,7 @@ public class ExtensionLoader<T> {
 
                 String[] activateGroup, activateValue;
 
+                // 如果有注解@Activate，则获取注解的group和value值
                 if (activate instanceof Activate) {
                     activateGroup = ((Activate) activate).group();
                     activateValue = ((Activate) activate).value();
@@ -226,6 +234,7 @@ public class ExtensionLoader<T> {
                 } else {
                     continue;
                 }
+                // 如果当前实现的组与我们传递的group匹配，且value值在url中存在
                 if (isMatchGroup(group, activateGroup)) {
                     T ext = getExtension(name);
                     if (!names.contains(name)
@@ -334,6 +343,7 @@ public class ExtensionLoader<T> {
     /**
      * Find the extension with the given name. If the specified name is not found, then {@link IllegalStateException}
      * will be thrown.
+     * name 配置文件中传入的key
      */
     @SuppressWarnings("unchecked")
     public T getExtension(String name) {
@@ -350,7 +360,7 @@ public class ExtensionLoader<T> {
             synchronized (holder) {
                 instance = holder.get();
                 if (instance == null) {
-                    // 创建扩展实例
+                    // 创建扩展实例，就是通过name创建对应的对象
                     instance = createExtension(name);
                     holder.set(instance);
                 }
@@ -473,6 +483,9 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * 获取自适应扩展类
+     */
     @SuppressWarnings("unchecked")
     public T getAdaptiveExtension() {
         Object instance = cachedAdaptiveInstance.get();
@@ -535,7 +548,9 @@ public class ExtensionLoader<T> {
         try {
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
-                // putIfAbsent方法，key值已存在，则value值依旧为原来的，不进行覆盖
+                // putIfAbsent方法
+                // 如果key值不存在，则向map中添加
+                // 如果key值已存在，不会覆盖已有的值，直接返回已经存在的值
                 EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
@@ -545,7 +560,7 @@ public class ExtensionLoader<T> {
             Set<Class<?>> wrapperClasses = cachedWrapperClasses;
             if (CollectionUtils.isNotEmpty(wrapperClasses)) {
                 for (Class<?> wrapperClass : wrapperClasses) {
-                    // 循环包装
+                    // 找到参数类型为type的构造函数，循环包装
                     instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
                 }
             }
@@ -577,10 +592,10 @@ public class ExtensionLoader<T> {
                         try {
                             // set方法后的属性
                             String property = getSetterProperty(method);
-                            // 获取要注入类的代理对象
+                            // 根据类型和名字获取要注入类的代理对象
                             Object object = objectFactory.getExtension(pt, property);
                             if (object != null) {
-                                // set返回赋值
+                                // 调用set方法赋值
                                 method.invoke(instance, object);
                             }
                         } catch (Exception e) {
@@ -637,7 +652,7 @@ public class ExtensionLoader<T> {
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
                 if (classes == null) {
-                    // 加载实现类
+                    // 加载配置文件中的实现类
                     classes = loadExtensionClasses();
                     cachedClasses.set(classes);
                 }
@@ -693,6 +708,7 @@ public class ExtensionLoader<T> {
         try {
             Enumeration<java.net.URL> urls;
             ClassLoader classLoader = findClassLoader();
+            // 通过getResources或getSystemResources得到配置文件
             if (classLoader != null) {
                 urls = classLoader.getResources(fileName);
             } else {
@@ -844,6 +860,7 @@ public class ExtensionLoader<T> {
      * test if clazz is a wrapper class
      * <p>
      * which has Constructor with given class type as its only argument
+     * 是否有参数类型为type的构造函数
      */
     private boolean isWrapperClass(Class<?> clazz) {
         try {
@@ -867,9 +884,14 @@ public class ExtensionLoader<T> {
         return extension.value();
     }
 
+    /**
+     * 创建具体的适配器对象
+     */
     @SuppressWarnings("unchecked")
     private T createAdaptiveExtension() {
         try {
+            // 1. 获取代理对象的一个实例
+            // 2. 执行ioc
             return injectExtension((T) getAdaptiveExtensionClass().newInstance());
         } catch (Exception e) {
             throw new IllegalStateException("Can't create adaptive extension " + type + ", cause: " + e.getMessage(), e);

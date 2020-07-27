@@ -48,14 +48,17 @@ public abstract class AbstractCompiler implements Compiler {
         } else {
             throw new IllegalArgumentException("No such class name in " + code);
         }
+        // 通过正则匹配出包路径，类名，再根据包路径，类名拼接出全路径名
         String className = pkg != null && pkg.length() > 0 ? pkg + "." + cls : cls;
         try {
+            // 尝试通过Class.forName加载该类并返回，防止重复编译
             return Class.forName(className, true, ClassHelper.getCallerClassLoader(getClass()));
         } catch (ClassNotFoundException e) {
             if (!code.endsWith("}")) {
                 throw new IllegalStateException("The java code not endsWith \"}\", code: \n" + code + "\n");
             }
             try {
+                // 调用doCompile进行编译，抽象方法由子类实现
                 return doCompile(className, code);
             } catch (RuntimeException t) {
                 throw t;

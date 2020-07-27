@@ -22,6 +22,7 @@ import org.apache.dubbo.common.extension.SPI;
 
 /**
  * SpiExtensionFactory
+ * 获取扩展点实现类上有@Adaptive注解的实例
  */
 public class SpiExtensionFactory implements ExtensionFactory {
 
@@ -29,6 +30,7 @@ public class SpiExtensionFactory implements ExtensionFactory {
     public <T> T getExtension(Class<T> type, String name) {
         if (type.isInterface() && type.isAnnotationPresent(SPI.class)) {
             ExtensionLoader<T> loader = ExtensionLoader.getExtensionLoader(type);
+            // 缓存的扩展点类不为空，直接返回Adaptive实例
             if (!loader.getSupportedExtensions().isEmpty()) {
                 // 返回了代理类的对象
                 return loader.getAdaptiveExtension();

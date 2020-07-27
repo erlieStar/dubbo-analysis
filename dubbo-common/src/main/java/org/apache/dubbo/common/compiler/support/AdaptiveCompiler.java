@@ -32,6 +32,10 @@ public class AdaptiveCompiler implements Compiler {
         DEFAULT_COMPILER = compiler;
     }
 
+    /**
+     * 获取对应的Compiler，并调用compile做编译
+     * 用户设置了compiler，就用设置了的，不然就用默认的
+     */
     @Override
     public Class<?> compile(String code, ClassLoader classLoader) {
         Compiler compiler;
