@@ -1,4 +1,4 @@
-package org.apache.dubbo.quickStart;
+package org.apache.dubbo.quickstart;
 
 import org.apache.dubbo.common.extension.ExtensionLoader;
 

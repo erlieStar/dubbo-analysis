@@ -1,4 +1,4 @@
-package org.apache.dubbo.quickStart;
+package org.apache.dubbo.quickstart;
 
 public class BenzCar implements Car {
 
