@@ -1,4 +1,6 @@
-package org.apache.dubbo.ioc;
+package org.apache.dubbo.adaptive;
+
+import org.apache.dubbo.common.URL;
 
 /**
  * @author lilimin
@@ -7,7 +9,7 @@ package org.apache.dubbo.ioc;
 public class BenzWheel implements Wheel {
 
     @Override
-    public void getBrandByUrl() {
+    public void getBrandByUrl(URL url) {
         System.out.println("benzWheel");
     }
 }

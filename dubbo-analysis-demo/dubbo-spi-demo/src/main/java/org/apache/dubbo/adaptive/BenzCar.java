@@ -1,5 +1,6 @@
-package org.apache.dubbo.ioc;
+package org.apache.dubbo.adaptive;
 
+import org.apache.dubbo.common.URL;
 
 public class BenzCar implements Car {
 
@@ -11,9 +12,9 @@ public class BenzCar implements Car {
     }
 
     @Override
-    public void getBrandByUrl() {
+    public void getBrandByUrl(URL url) {
         System.out.println("benzCar");
         // 代理类根据URL找到实现类，然后再调用实现类
-        wheel.getBrandByUrl();
+        wheel.getBrandByUrl(url);
     }
 }
