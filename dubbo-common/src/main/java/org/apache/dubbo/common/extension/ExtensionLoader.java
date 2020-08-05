@@ -351,7 +351,7 @@ public class ExtensionLoader<T> {
             throw new IllegalArgumentException("Extension name == null");
         }
         if ("true".equals(name)) {
-            // 获取默认的扩展实现类
+            // 传入的name为true，获取默认的扩展实现类
             return getDefaultExtension();
         }
         Holder<Object> holder = getOrCreateHolder(name);
@@ -593,6 +593,7 @@ public class ExtensionLoader<T> {
                             // set方法后的属性
                             String property = getSetterProperty(method);
                             // 根据类型和名字获取要注入类的代理对象
+                            // 这个里面会最终调用ExtensionLoader#getAdaptiveExtension方法
                             Object object = objectFactory.getExtension(pt, property);
                             if (object != null) {
                                 // 调用set方法赋值
