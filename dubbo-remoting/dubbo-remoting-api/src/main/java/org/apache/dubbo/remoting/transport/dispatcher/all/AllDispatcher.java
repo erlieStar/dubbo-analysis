@@ -25,6 +25,7 @@ import org.apache.dubbo.remoting.Dispatcher;
  */
 public class AllDispatcher implements Dispatcher {
 
+    // 线程模型名称
     public static final String NAME = "all";
 
     @Override

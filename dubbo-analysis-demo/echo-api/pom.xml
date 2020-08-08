@@ -3,27 +3,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>dubbo-parent</artifactId>
+        <artifactId>dubbo-analysis-demo</artifactId>
         <groupId>org.apache.dubbo</groupId>
         <version>2.7.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dubbo-analysis-demo</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>java-spi</module>
-        <module>dubbo-spi</module>
-        <module>filter</module>
-        <module>echo-api</module>
-        <module>xml-consumer</module>
-        <module>xml-provider</module>
-    </modules>
+    <artifactId>echo-api</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -33,11 +24,7 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo -->
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>2.7.1</version>
-        </dependency>
+
     </dependencies>
+
 </project>

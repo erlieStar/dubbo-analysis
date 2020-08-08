@@ -39,9 +39,13 @@ public class FixedThreadPool implements ThreadPool {
 
     @Override
     public Executor getExecutor(URL url) {
+        // 获取线程池中线程的名称前缀
         String name = url.getParameter(Constants.THREAD_NAME_KEY, Constants.DEFAULT_THREAD_NAME);
+        // 获取线程个数
         int threads = url.getParameter(Constants.THREADS_KEY, Constants.DEFAULT_THREADS);
+        // 获取线程池队列大小
         int queues = url.getParameter(Constants.QUEUES_KEY, Constants.DEFAULT_QUEUES);
+        // 线程数为0，使用SynchronousQueue。小于0，使用无界队列，大于0，使用有界队列
         return new ThreadPoolExecutor(threads, threads, 0, TimeUnit.MILLISECONDS,
                 queues == 0 ? new SynchronousQueue<Runnable>() :
                         (queues < 0 ? new LinkedBlockingQueue<Runnable>()
