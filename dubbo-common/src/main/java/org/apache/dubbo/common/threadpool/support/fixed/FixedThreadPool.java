@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
  * Creates a thread pool that reuses a fixed number of threads
  *
  * @see java.util.concurrent.Executors#newFixedThreadPool(int)
+ *
+ * 固定大小的线程池
  */
 public class FixedThreadPool implements ThreadPool {
 

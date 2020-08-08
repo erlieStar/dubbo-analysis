@@ -28,7 +28,7 @@ public interface Protocol {
 
     /**
      * Get default port when user doesn't config the port.
-     *
+     * 当用户没有设置端口时，返回默认的端口
      * @return default port
      */
     int getDefaultPort();
@@ -97,6 +97,7 @@ public interface Protocol {
      * 1. Cancel all services this protocol exports and refers <br>
      * 2. Release all occupied resources, for example: connection, port, etc. <br>
      * 3. Protocol can continue to export and refer new service even after it's destroyed.
+     * 销毁
      */
     void destroy();
 

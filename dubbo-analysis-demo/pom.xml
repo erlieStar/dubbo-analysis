@@ -12,8 +12,9 @@
     <artifactId>dubbo-analysis-demo</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>java-spi-demo</module>
-        <module>dubbo-spi-demo</module>
+        <module>java-spi</module>
+        <module>dubbo-spi</module>
+        <module>filter</module>
     </modules>
 
     <properties>

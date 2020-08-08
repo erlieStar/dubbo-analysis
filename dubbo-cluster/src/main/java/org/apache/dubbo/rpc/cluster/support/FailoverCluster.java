@@ -23,7 +23,7 @@ import org.apache.dubbo.rpc.cluster.Directory;
 
 /**
  * {@link FailoverClusterInvoker}
- *
+ * dubbo默认的容错机制，当出现失败时，会重试其他服务器，可以通过retries="2"设置重试次数
  */
 public class FailoverCluster implements Cluster {
 

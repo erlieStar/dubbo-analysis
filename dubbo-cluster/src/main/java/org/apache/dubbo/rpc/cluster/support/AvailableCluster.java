@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * AvailableCluster
- *
+ * 遍历服务列表，找到第一个可用的节点，直接请求并返回结果，如果没有可用的节点抛出 RpcException
  */
 public class AvailableCluster implements Cluster {
 

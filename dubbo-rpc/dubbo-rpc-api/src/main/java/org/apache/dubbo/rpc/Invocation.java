@@ -24,6 +24,8 @@ import java.util.Map;
  * @serial Don't change the class name and package name.
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcInvocation
+ *
+ * 封装请求的方法参数等，包含Invoker
  */
 public interface Invocation {
 

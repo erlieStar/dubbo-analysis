@@ -82,6 +82,9 @@ public interface Filter {
      */
     Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException;
 
+    /**
+     * java8新特性，接口默认返回收到的结果
+     */
     default Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
         return result;
     }

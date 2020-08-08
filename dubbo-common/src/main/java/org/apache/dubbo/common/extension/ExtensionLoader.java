@@ -244,13 +244,16 @@ public class ExtensionLoader<T> {
                     }
                 }
             }
+            // 根据@Activate中配置的before,after,order等参数进行排序
             exts.sort(ActivateComparator.COMPARATOR);
         }
         List<T> usrs = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
+            // name前缀不为-，且之前没有排除过
             if (!name.startsWith(Constants.REMOVE_VALUE_PREFIX)
                     && !names.contains(Constants.REMOVE_VALUE_PREFIX + name)) {
+                // name 为 default
                 if (Constants.DEFAULT_KEY.equals(name)) {
                     if (!usrs.isEmpty()) {
                         exts.addAll(0, usrs);

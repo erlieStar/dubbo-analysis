@@ -65,6 +65,9 @@ public class SpringExtensionFactory implements ExtensionFactory {
         contexts.clear();
     }
 
+    /**
+     * 遍历所有的spring上下文，先根据名字从spring容器中查找，如果找不到，则根据类型去查找
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getExtension(Class<T> type, String name) {

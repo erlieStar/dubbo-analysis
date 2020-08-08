@@ -58,6 +58,7 @@ public class TimeoutFilter implements Filter {
     public Result onResponse(Result result, Invoker<?> invoker, Invocation invocation) {
         String startAttach = invocation.getAttachment(TIMEOUT_FILTER_START_TIME);
         if (startAttach != null) {
+            // 超时打印警告日志
             long elapsed = System.currentTimeMillis() - Long.valueOf(startAttach);
             if (invoker.getUrl() != null
                     && elapsed > invoker.getUrl().getMethodParameter(invocation.getMethodName(),

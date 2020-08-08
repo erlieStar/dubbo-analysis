@@ -56,6 +56,8 @@ public interface Transporter {
      * @return client
      * @throws RemotingException
      * @see org.apache.dubbo.remoting.Transporters#connect(URL, ChannelHandler...)
+     *
+     * 连接到一个服务
      */
     @Adaptive({Constants.CLIENT_KEY, Constants.TRANSPORTER_KEY})
     Client connect(URL url, ChannelHandler handler) throws RemotingException;

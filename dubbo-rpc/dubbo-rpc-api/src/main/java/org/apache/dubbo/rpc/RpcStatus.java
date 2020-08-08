@@ -33,9 +33,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class RpcStatus {
 
     private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>();
-
+    // 服务接口 方法名 RpcStatus
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>();
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
+    // 当前激活并发数
     private final AtomicInteger active = new AtomicInteger();
     private final AtomicLong total = new AtomicLong();
     private final AtomicInteger failed = new AtomicInteger();
@@ -79,6 +80,7 @@ public class RpcStatus {
         String uri = url.toIdentityString();
         ConcurrentMap<String, RpcStatus> map = METHOD_STATISTICS.get(uri);
         if (map == null) {
+            // 不存在就放，存在就不放
             METHOD_STATISTICS.putIfAbsent(uri, new ConcurrentHashMap<String, RpcStatus>());
             map = METHOD_STATISTICS.get(uri);
         }
@@ -101,6 +103,9 @@ public class RpcStatus {
         }
     }
 
+    /**
+     * 递增并发数
+     */
     public static void beginCount(URL url, String methodName) {
         beginCount(url, methodName, Integer.MAX_VALUE);
     }
@@ -112,6 +117,7 @@ public class RpcStatus {
         max = (max <= 0) ? Integer.MAX_VALUE : max;
         RpcStatus appStatus = getStatus(url);
         RpcStatus methodStatus = getStatus(url, methodName);
+        // 超过最大限制返回false，否则为true
         if (methodStatus.active.incrementAndGet() > max) {
             methodStatus.active.decrementAndGet();
             return false;
@@ -125,6 +131,8 @@ public class RpcStatus {
      * @param url
      * @param elapsed
      * @param succeeded
+     *
+     * 递减并发数
      */
     public static void endCount(URL url, String methodName, long elapsed, boolean succeeded) {
         endCount(getStatus(url), elapsed, succeeded);

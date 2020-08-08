@@ -150,6 +150,9 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         this.registry = registry;
     }
 
+    /**
+     * 订阅服务提供者列表
+     */
     public void subscribe(URL url) {
         setConsumerUrl(url);
         consumerConfigurationListener.addNotifyListener(this);
