@@ -81,11 +81,13 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
             currentClient = clients[index.getAndIncrement() % clients.length];
         }
         try {
-            // 获取异步配置
+            // 是否为异步
             boolean isAsync = RpcUtils.isAsync(getUrl(), invocation);
+            // 是否为future方式异步
             boolean isAsyncFuture = RpcUtils.isReturnTypeFuture(inv);
             // isOneway 为 true，表示“单向”通信
             boolean isOneway = RpcUtils.isOneway(getUrl(), invocation);
+            // 超时等待时间
             int timeout = getUrl().getMethodParameter(methodName, Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
             // 不需要响应的请求
             if (isOneway) {

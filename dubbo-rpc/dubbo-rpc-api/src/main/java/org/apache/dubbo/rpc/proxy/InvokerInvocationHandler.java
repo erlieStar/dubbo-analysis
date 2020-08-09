@@ -37,6 +37,9 @@ public class InvokerInvocationHandler implements InvocationHandler {
         this.invoker = handler;
     }
 
+    /**
+     * 消费方调用服务的接口后，都会进入如下方法
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
@@ -61,6 +64,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
 
     private RpcInvocation createInvocation(Method method, Object[] args) {
         RpcInvocation invocation = new RpcInvocation(method, args);
+        // 返回值为 CompletableFuture
         if (RpcUtils.hasFutureReturnType(method)) {
             invocation.setAttachment(Constants.FUTURE_RETURNTYPE_KEY, "true");
             invocation.setAttachment(Constants.ASYNC_KEY, "true");

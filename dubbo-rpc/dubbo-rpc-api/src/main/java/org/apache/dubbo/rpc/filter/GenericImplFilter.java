@@ -66,6 +66,7 @@ public class GenericImplFilter implements Filter {
             }
 
             Object[] args;
+            // 如果为nativejava 或 bean 的方式
             if (ProtocolUtils.isBeanGenericSerialization(generic)) {
                 args = new Object[arguments.length];
                 for (int i = 0; i < arguments.length; i++) {
