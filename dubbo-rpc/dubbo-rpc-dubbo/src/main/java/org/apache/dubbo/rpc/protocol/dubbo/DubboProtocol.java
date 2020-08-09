@@ -130,10 +130,12 @@ public class DubboProtocol extends AbstractProtocol {
             // 通过 Invoker 调用具体的服务
             Result result = invoker.invoke(inv);
 
+            // 异步执行
             if (result instanceof AsyncRpcResult) {
                 return ((AsyncRpcResult) result).getResultFuture().thenApply(r -> (Object) r);
 
             } else {
+                // 同步执行
                 return CompletableFuture.completedFuture(result);
             }
         }
@@ -148,6 +150,9 @@ public class DubboProtocol extends AbstractProtocol {
             }
         }
 
+        /**
+         * 线程池中的任务被执行后，最终会调用如下方法
+         */
         @Override
         public void connected(Channel channel) throws RemotingException {
             invoke(channel, Constants.ON_CONNECT_KEY);
@@ -267,6 +272,9 @@ public class DubboProtocol extends AbstractProtocol {
         return DEFAULT_PORT;
     }
 
+    /**
+     * 暴露远程服务
+     */
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         URL url = invoker.getUrl();
@@ -292,6 +300,7 @@ public class DubboProtocol extends AbstractProtocol {
             }
         }
 
+        // 同一个机器的不同服务导出只会开启一个NettyServer
         openServer(url);
         optimizeSerialization(url);
 
@@ -302,6 +311,7 @@ public class DubboProtocol extends AbstractProtocol {
         // find server.
         String key = url.getAddress();
         //client can export a service which's only for server to invoke
+        // 只有服务提供方才会启动监听
         boolean isServer = url.getParameter(Constants.IS_SERVER_KEY, true);
         if (isServer) {
             ExchangeServer server = serverMap.get(key);
@@ -335,6 +345,7 @@ public class DubboProtocol extends AbstractProtocol {
 
         ExchangeServer server;
         try {
+            // 传输默认选择的是
             server = Exchangers.bind(url, requestHandler);
         } catch (RemotingException e) {
             throw new RpcException("Fail to start server(url: " + url + ") " + e.getMessage(), e);

@@ -86,7 +86,7 @@ public class ExtensionLoader<T> {
 
     // 只有一个属性value，然后value为Map<String, Class<?>，key为定义的名字，value为对应的Class对象
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
-
+    // 保存类上有Activate注解的名字机器对应的实现类
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
@@ -216,6 +216,7 @@ public class ExtensionLoader<T> {
         List<T> exts = new ArrayList<>();
         List<String> names = values == null ? new ArrayList<>(0) : Arrays.asList(values);
         // url的参数中传入了-default，所有的默认@Activate都不会被激活
+        // 这里加载的是默认的
         if (!names.contains(Constants.REMOVE_VALUE_PREFIX + Constants.DEFAULT_KEY)) {
             getExtensionClasses();
             for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) {
@@ -247,6 +248,7 @@ public class ExtensionLoader<T> {
             // 根据@Activate中配置的before,after,order等参数进行排序
             exts.sort(ActivateComparator.COMPARATOR);
         }
+        // 这里加载的是用户自己定义的
         List<T> usrs = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
@@ -772,11 +774,13 @@ public class ExtensionLoader<T> {
                     + clazz.getName() + " is not subtype of interface.");
         }
         if (clazz.isAnnotationPresent(Adaptive.class)) {
+            // 类上有Adaptive注解
             cacheAdaptiveClass(clazz);
-            // 是否是一个包装类
         } else if (isWrapperClass(clazz)) {
+            // 是包装类
             cacheWrapperClass(clazz);
         } else {
+            // 检测clazz是否有默认的构造方法，如果没有，抛出异常
             clazz.getConstructor();
             if (StringUtils.isEmpty(name)) {
                 name = findAnnotationName(clazz);
@@ -787,7 +791,9 @@ public class ExtensionLoader<T> {
             // 可以有多个名字，用英文逗号分隔
             String[] names = NAME_SEPARATOR.split(name);
             if (ArrayUtils.isNotEmpty(names)) {
+                // 如果类上有Activate注解，则使用names数组的第一个元素作为键
                 cacheActivateClass(clazz, names[0]);
+                // 普通扩展类
                 for (String n : names) {
                     cacheName(clazz, n);
                     saveInExtensionClass(extensionClasses, clazz, name);
@@ -842,6 +848,7 @@ public class ExtensionLoader<T> {
         if (cachedAdaptiveClass == null) {
             cachedAdaptiveClass = clazz;
         } else if (!cachedAdaptiveClass.equals(clazz)) {
+            // 有多个类上有Adaptive注解，则报异常
             throw new IllegalStateException("More than 1 adaptive class found: "
                     + cachedAdaptiveClass.getClass().getName()
                     + ", " + clazz.getClass().getName());

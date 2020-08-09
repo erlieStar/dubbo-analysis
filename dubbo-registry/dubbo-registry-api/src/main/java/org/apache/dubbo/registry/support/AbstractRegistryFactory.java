@@ -90,6 +90,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
                 .build();
         String key = url.toServiceStringWithoutResolving();
         // Lock the registry access process to ensure a single instance of the registry
+        // 只有一个线程创建服务注册实例
         LOCK.lock();
         try {
             // 访问缓存

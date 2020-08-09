@@ -102,13 +102,16 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         Object msg = req.getData();
         try {
             // handle data.
+            // 调用DubboProtocol的reply方法
             CompletableFuture<Object> future = handler.reply(channel, msg);
             if (future.isDone()) {
+                // 请求已经完成，设置结果并返回
                 res.setStatus(Response.OK);
                 res.setResult(future.get());
                 channel.send(res);
                 return;
             }
+            // 等返回结果后回调
             future.whenComplete((result, t) -> {
                 try {
                     if (t == null) {
@@ -202,10 +205,10 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                 } else {
                     // 双向通信
                     if (request.isTwoWay()) {
-                        // 向后调用服务，并得到调用结果
+                        // 需要有返回值
                         handleRequest(exchangeChannel, request);
                     } else {
-                        // 将调用结果返回给服务消费端
+                        // 不需要有返回值
                         handler.received(exchangeChannel, request.getData());
                     }
                 }
