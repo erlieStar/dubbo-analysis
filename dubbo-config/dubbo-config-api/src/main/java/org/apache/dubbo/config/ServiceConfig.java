@@ -336,7 +336,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         // 检查及更新配置
         // 配置存在的地方
         // 1. xml
-        // 2. -D 系统配置
+        // 2. -D 系统配置(启动参数中)
         // 3. 配置中心-全局配置
         // 4. 配置中心-app全局配置
         // 5. dubbo.properties
@@ -391,6 +391,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
         exported = true;
 
+        // 服务配置了path就用配置的，否则用接口名，<service path/>
         if (StringUtils.isEmpty(path)) {
             path = interfaceName;
         }
@@ -430,15 +431,19 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
     }
 
     // 多协议多注册中心导出服务
+    // 配置文件中配了多个<dubbo:protocol/>
+    // 配置文件中配了多个<dubbo:config-center>
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
         // 加载注册中心链接
         List<URL> registryURLs = loadRegistries(true);
         for (ProtocolConfig protocolConfig : protocols) {
             String pathKey = URL.buildKey(getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), group, version);
+            // 应用模型
+            // 服务名 对应的实现类 对应的接口
             ProviderModel providerModel = new ProviderModel(pathKey, ref, interfaceClass);
             ApplicationModel.initProviderModel(pathKey, providerModel);
-            // 在每个协议下导出服务
+            // 在每个协议下导出服务，并且注册到每个注册中心
             doExportUrlsFor1Protocol(protocolConfig, registryURLs);
         }
     }
@@ -450,6 +455,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             name = Constants.DUBBO;
         }
 
+        // 构建url，并且实现属性覆盖
         Map<String, String> map = new HashMap<String, String>();
         map.put(Constants.SIDE_KEY, Constants.PROVIDER_SIDE);
         appendRuntimeParameters(map);
@@ -527,11 +533,13 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             }
 
             // 为接口生成包裹类 Wrapper，Wrapper 中包含了接口的详细信息，比如接口方法名数组，字段信息等
+            // 接口的工具类
             String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames();
             if (methods.length == 0) {
                 logger.warn("No method found in service interface " + interfaceClass.getName());
                 map.put(Constants.METHODS_KEY, Constants.ANY_VALUE);
             } else {
+                // url中增加methods属性，表明可以调用的方法
                 map.put(Constants.METHODS_KEY, StringUtils.join(new HashSet<String>(Arrays.asList(methods)), ","));
             }
         }
@@ -548,6 +556,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         String host = this.findConfigedHosts(protocolConfig, registryURLs, map);
         Integer port = this.findConfigedPorts(protocolConfig, name, map);
         // 拼接url对象
+        // url代表一个服务
         URL url = new URL(name, host, port, getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), map);
 
         if (ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
@@ -593,6 +602,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
 
+                        // 调用了 RegistryProtocol
                         Exporter<?> exporter = protocol.export(wrapperInvoker);
                         exporters.add(exporter);
                     }

@@ -171,6 +171,8 @@ public class RegistryProtocol implements Protocol {
         // zookeeper://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?application=demo-provider&dubbo=2.0.2&export=dubbo%3A%2F%2F172.17.48.52%3A20880%2Fcom.alibaba.dubbo.demo.DemoService%3Fanyhost%3Dtrue%26application%3Ddemo-provider
         URL registryUrl = getRegistryUrl(originInvoker);
         // url to export locally
+        // 获取协议的url
+        // http://192.168.0.1
         URL providerUrl = getProviderUrl(originInvoker);
 
         // Subscribe the override data

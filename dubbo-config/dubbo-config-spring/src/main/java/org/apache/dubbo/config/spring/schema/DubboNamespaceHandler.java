@@ -45,6 +45,8 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport {
     @Override
     public void init() {
         // 解析配置文件，映射为相应的对象
+        // 如 <dubbo:application> 转为 ApplicationConfig对象
+        // <dubbo:registry> 转为 RegistryConfig对象
         registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
         registerBeanDefinitionParser("module", new DubboBeanDefinitionParser(ModuleConfig.class, true));
         registerBeanDefinitionParser("registry", new DubboBeanDefinitionParser(RegistryConfig.class, true));
