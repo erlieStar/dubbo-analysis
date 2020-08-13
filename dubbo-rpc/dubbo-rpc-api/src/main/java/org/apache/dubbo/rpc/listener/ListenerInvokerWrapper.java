@@ -30,6 +30,7 @@ import java.util.List;
 
 /**
  * ListenerInvoker
+ * 引用成功监听器的触发
  */
 public class ListenerInvokerWrapper<T> implements Invoker<T> {
 
