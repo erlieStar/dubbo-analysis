@@ -341,7 +341,12 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
             }
         } else {
             // 用户指定服务提供方地址
+            // <dubbo:reference url="">
+            // 这个url可以写直接的地址，如 http://127.0.0.1:8080
+            // 也可以是注册中心地址，如 registry：//
+            // 从url中去拿
             if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
+                // 分号隔开地址
                 String[] us = Constants.SEMICOLON_SPLIT_PATTERN.split(url);
                 if (us != null && us.length > 0) {
                     for (String u : us) {
@@ -357,6 +362,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                     }
                 }
             } else { // assemble URL from register center's configuration
+                // 从注册中心去拿
                 // 根据服务注册中心信息转配url对象
                 checkRegistry();
                 List<URL> us = loadRegistries(false);
@@ -374,7 +380,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 }
             }
 
-            // 单注册中心消费
+            // 只有一个http地址或者注册中心地址
             if (urls.size() == 1) {
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {
