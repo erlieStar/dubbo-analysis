@@ -23,6 +23,8 @@
 
     <dubbo:application name="demo-consumer"/>
 
+    <dubbo:consumer filter="consumercontext"/>
+
     <dubbo:registry address="zookeeper://www.javashitang.com:2181"/>
 
     <!-- generate proxy for the remote service, then demoService can be used in the same way as the

@@ -211,6 +211,8 @@ public class ExtensionLoader<T> {
      * @param group  group
      * @return extension list which are activated
      * @see org.apache.dubbo.common.extension.Activate
+     *
+     * 配置参考文档：http://dubbo.apache.org/zh-cn/docs/dev/impls/filter.html
      */
     public List<T> getActivateExtension(URL url, String[] values, String group) {
         List<T> exts = new ArrayList<>();
@@ -218,6 +220,7 @@ public class ExtensionLoader<T> {
         // url的参数中传入了-default，所有的默认@Activate都不会被激活
         // 这里加载的是默认的
         if (!names.contains(Constants.REMOVE_VALUE_PREFIX + Constants.DEFAULT_KEY)) {
+            // 遇到了标记了@Activate注解的SPI实现类，会把name和实例放到cachedActivates中
             getExtensionClasses();
             for (Map.Entry<String, Object> entry : cachedActivates.entrySet()) {
                 String name = entry.getKey();
@@ -236,8 +239,11 @@ public class ExtensionLoader<T> {
                     continue;
                 }
                 // 如果当前实现的组与我们传递的group匹配，且value值在url中存在
+                // group为空也会激活
                 if (isMatchGroup(group, activateGroup)) {
                     T ext = getExtension(name);
+                    // 这里为啥要排除呢？
+                    // 因为如果用户自己定义了系统的filter，这里不排除，后面加载用户自定义的又会加载，导致加载了2次，所有要排除
                     if (!names.contains(name)
                             && !names.contains(Constants.REMOVE_VALUE_PREFIX + name)
                             && isActive(activateValue, url)) {

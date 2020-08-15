@@ -425,6 +425,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
             metadataReportService.publishConsumer(consumerURL);
         }
         // create service proxy
+        // 这个invoker是 MockClusterInvoker，然后返回MockClusterInvoker的代理类
         return (T) proxyFactory.getProxy(invoker);
     }
 

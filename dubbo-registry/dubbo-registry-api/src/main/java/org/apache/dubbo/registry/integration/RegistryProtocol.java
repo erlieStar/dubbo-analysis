@@ -399,7 +399,9 @@ public class RegistryProtocol implements Protocol {
         // 订阅zk的变化
         directory.subscribe(subscribeUrl.addParameter(CATEGORY_KEY,
                 PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY));
-
+        // 从服务目录选出来一个Invoker
+        // MockClusterWrapper -> FailoverCluster
+        // MockClusterInvoker -> FailoverClusterInvoker
         Invoker invoker = cluster.join(directory);
         ProviderConsumerRegTable.registerConsumer(invoker, url, subscribeUrl, directory);
         return invoker;

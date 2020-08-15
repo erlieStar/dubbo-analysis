@@ -39,6 +39,10 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
         this.maxCapacity = maxCapacity;
     }
 
+    /**
+     * 钩子方法，返回值用于判断每次向集合添加元素时是否应该删除最少访问的元素
+     * 当这个方法返回true时，链表会把头部节点删除，链表每次添加数据都会在队列尾部添加
+     */
     @Override
     protected boolean removeEldestEntry(java.util.Map.Entry<K, V> eldest) {
         return size() > maxCapacity;

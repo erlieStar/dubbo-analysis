@@ -160,6 +160,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
         Invoker<T> invoker = loadbalance.select(invokers, getUrl(), invocation);
 
         //If the `invoker` is in the  `selected` or invoker is unavailable && availablecheck is true, reselect.
+        // 进行负载均衡后，如果选出来的已经调用过了，则重新进行负载均衡
         if ((selected != null && selected.contains(invoker))
                 || (!invoker.isAvailable() && getUrl() != null && availablecheck)) {
             try {
@@ -214,6 +215,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
             }
         }
 
+        // 进行一次负载均衡调用之后选到调用过的之后，在重新选择的时候不会包含已经调用过的
         if (!reselectInvokers.isEmpty()) {
             return loadbalance.select(reselectInvokers, getUrl(), invocation);
         }
@@ -244,6 +246,8 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
             ((RpcInvocation) invocation).addAttachments(contextAttachments);
         }
 
+        // 经过路由之后的最终的Invokers
+        // 这里进行过滤
         List<Invoker<T>> invokers = list(invocation);
         // 初始化负载均衡策略
         LoadBalance loadbalance = initLoadBalance(invokers, invocation);

@@ -33,6 +33,10 @@ import org.apache.dubbo.rpc.support.MockInvoker;
 
 import java.util.List;
 
+/**
+ * 用于服务降级，参考资料 http://dubbo.apache.org/zh-cn/docs/user/demos/local-mock.html
+ *
+ */
 public class MockClusterInvoker<T> implements Invoker<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(MockClusterInvoker.class);
@@ -82,11 +86,11 @@ public class MockClusterInvoker<T> implements Invoker<T> {
                 logger.warn("force-mock: " + invocation.getMethodName() + " force-mock enabled , url : " + directory.getUrl());
             }
             //force:direct mock
-            // force:xxx 直接执行 mock 逻辑，不发起远程调用
+            // force: 直接执行 mock 逻辑，不发起远程调用
             result = doMockInvoke(invocation, null);
         } else {
             //fail-mock
-            // fail:xxx 表示消费方对调用服务失败后，再执行 mock 逻辑，不抛出异常
+            // fail: 表示消费方对调用服务失败后，再执行 mock 逻辑，不抛出异常
             try {
                 // 发起远程rpc，成功则不会执行mock操作，否则执行doMockInvoke
                 result = this.invoker.invoke(invocation);
@@ -104,6 +108,9 @@ public class MockClusterInvoker<T> implements Invoker<T> {
         return result;
     }
 
+    /**
+     * 对结果执行mock
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Result doMockInvoke(Invocation invocation, RpcException e) {
         Result result = null;

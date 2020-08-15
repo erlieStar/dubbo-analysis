@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * ListenerExporter
+ * 一个监听器类
  */
 public class ListenerExporterWrapper<T> implements Exporter<T> {
 
@@ -47,6 +48,7 @@ public class ListenerExporterWrapper<T> implements Exporter<T> {
             for (ExporterListener listener : listeners) {
                 if (listener != null) {
                     try {
+                        // 引用成功触发监听器
                         listener.exported(this);
                     } catch (RuntimeException t) {
                         logger.error(t.getMessage(), t);

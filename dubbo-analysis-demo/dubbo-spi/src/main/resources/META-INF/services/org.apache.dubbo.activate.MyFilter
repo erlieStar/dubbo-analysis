@@ -1,0 +1,4 @@
+cache=org.apache.dubbo.activate.MyCacheFilter
+consumer=org.apache.dubbo.activate.MyConsumerFilter
+log=org.apache.dubbo.activate.MyLogFilter
+provider=org.apache.dubbo.activate.MyProviderFilter

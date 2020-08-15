@@ -23,7 +23,7 @@ import org.apache.dubbo.rpc.cluster.Directory;
 
 /**
  * mock impl
- *
+ * MockClusterWrapper是对Cluster（默认是FailoverCluster）的包装
  */
 public class MockClusterWrapper implements Cluster {
 

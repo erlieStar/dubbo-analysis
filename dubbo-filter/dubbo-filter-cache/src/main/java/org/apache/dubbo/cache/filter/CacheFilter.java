@@ -60,6 +60,7 @@ import java.io.Serializable;
  * @see org.apache.dubbo.cache.support.expiring.ExpiringCacheFactory
  * @see org.apache.dubbo.cache.support.expiring.ExpiringCache
  *
+ * provider或者consumer配置了cache="xxx"，就会经过CacheFilter
  */
 @Activate(group = {Constants.CONSUMER, Constants.PROVIDER}, value = Constants.CACHE_KEY)
 public class CacheFilter implements Filter {

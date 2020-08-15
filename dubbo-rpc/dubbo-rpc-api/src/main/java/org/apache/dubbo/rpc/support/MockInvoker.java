@@ -40,6 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * mock 的相关实现 http://dubbo.apache.org/zh-cn/docs/user/demos/local-mock.html
+ * @param <T>
+ */
 final public class MockInvoker<T> implements Invoker<T> {
     private final static ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
     private final static Map<String, Invoker<?>> mocks = new ConcurrentHashMap<String, Invoker<?>>();
@@ -114,13 +118,16 @@ final public class MockInvoker<T> implements Invoker<T> {
             }
         } else if (mock.startsWith(Constants.THROW_PREFIX)) {
             mock = mock.substring(Constants.THROW_PREFIX.length()).trim();
+            // 只配置了一个throw
             if (StringUtils.isBlank(mock)) {
                 throw new RpcException("mocked exception for service degradation.");
             } else { // user customized class
+                // 返回用户自定义的异常类
                 Throwable t = getThrowable(mock);
                 throw new RpcException(RpcException.BIZ_EXCEPTION, t);
             }
         } else { //impl mock
+            // mock里面配置的是实现类
             try {
                 Invoker<T> invoker = getInvoker(mock);
                 return invoker.invoke(invocation);

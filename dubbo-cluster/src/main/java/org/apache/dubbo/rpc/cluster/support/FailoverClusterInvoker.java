@@ -78,7 +78,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 // 重新检查一下
                 checkInvokers(copyInvokers, invocation);
             }
-            // 通过负载均衡选择 Invoker
+            // 通过负载均衡选择 Invoker，已经调用过的不会再选择
             Invoker<T> invoker = select(loadbalance, invocation, copyInvokers, invoked);
             invoked.add(invoker);
             RpcContext.getContext().setInvokers((List) invoked);
@@ -98,6 +98,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 }
                 return result;
             } catch (RpcException e) {
+                // 业务类的异常直接跑出来
                 if (e.isBiz()) { // biz exception.
                     throw e;
                 }

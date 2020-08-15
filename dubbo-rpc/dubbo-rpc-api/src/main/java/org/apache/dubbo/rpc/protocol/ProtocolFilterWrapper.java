@@ -47,7 +47,7 @@ public class ProtocolFilterWrapper implements Protocol {
 
     /**
      *
-     * @param invoker
+     * @param invoker 最终执行的invoker, dubbo协议为DubboInvoker, http协议为AbstractExporter
      * @param key
      * @param group 通过传入 Constants.PROVIDER 或 Constants.CONSUMER 来表明是生产端的调用链，还是消费端的调用链
      * @param <T>
