@@ -391,7 +391,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
         exported = true;
 
-        // 服务配置了path就用配置的，否则用接口名，<service path/>
+        // 服务配置了path就用配置的，否则用接口名，<service path=""/>
         if (StringUtils.isEmpty(path)) {
             path = interfaceName;
         }
