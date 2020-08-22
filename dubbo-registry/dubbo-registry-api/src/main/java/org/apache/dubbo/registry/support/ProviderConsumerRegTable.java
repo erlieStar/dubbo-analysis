@@ -33,7 +33,9 @@ import java.util.concurrent.ConcurrentMap;
  * @date 2017/11/23
  */
 public class ProviderConsumerRegTable {
+    // 服务端代理对象
     public static ConcurrentHashMap<String, ConcurrentMap<Invoker, ProviderInvokerWrapper>> providerInvokers = new ConcurrentHashMap<>();
+    // 消费端代理对象
     public static ConcurrentHashMap<String, Set<ConsumerInvokerWrapper>> consumerInvokers = new ConcurrentHashMap<>();
 
     public static <T> ProviderInvokerWrapper<T> registerProvider(Invoker<T> invoker, URL registryUrl, URL providerUrl) {

@@ -171,7 +171,7 @@ public class RegistryProtocol implements Protocol {
         // zookeeper://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?application=demo-provider&dubbo=2.0.2&export=dubbo%3A%2F%2F172.17.48.52%3A20880%2Fcom.alibaba.dubbo.demo.DemoService%3Fanyhost%3Dtrue%26application%3Ddemo-provider
         URL registryUrl = getRegistryUrl(originInvoker);
         // url to export locally
-        // 获取协议的url
+        // 获取服务的url
         // http://192.168.0.1
         URL providerUrl = getProviderUrl(originInvoker);
 
@@ -179,16 +179,19 @@ public class RegistryProtocol implements Protocol {
         // FIXME When the provider subscribes, it will affect the scene : a certain JVM exposes the service and call
         //  the same service. Because the subscribed is cached key with the name of the service, it causes the
         //  subscription information to cover.
+        // 监听路径，因为配置会修改
         final URL overrideSubscribeUrl = getSubscribedOverrideUrl(providerUrl);
         final OverrideListener overrideSubscribeListener = new OverrideListener(overrideSubscribeUrl, originInvoker);
         overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener);
 
         providerUrl = overrideUrlWithConfig(providerUrl, overrideSubscribeListener);
         //export invoker
+        // 导出服务，服务已经启动
         final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker, providerUrl);
 
         // url to registry
         // 根据 URL 加载 Registry 实现类，比如 ZookeeperRegistry
+        // 连接到注册中心
         final Registry registry = getRegistry(originInvoker);
         final URL registeredProviderUrl = getRegisteredProviderUrl(providerUrl, registryUrl);
         ProviderInvokerWrapper<T> providerInvokerWrapper = ProviderConsumerRegTable.registerProvider(originInvoker,
@@ -204,6 +207,7 @@ public class RegistryProtocol implements Protocol {
         }
 
         // Deprecated! Subscribe to override rules in 2.6.x or before.
+        // 监听2.6之前的目录
         registry.subscribe(overrideSubscribeUrl, overrideSubscribeListener);
 
         exporter.setRegisterUrl(registeredProviderUrl);
@@ -223,6 +227,7 @@ public class RegistryProtocol implements Protocol {
     private <T> ExporterChangeableWrapper<T> doLocalExport(final Invoker<T> originInvoker, URL providerUrl) {
         String key = getCacheKey(originInvoker);
 
+        // protocol.export()这个会返回实际的protocol，默认为DubboProtocol
         return (ExporterChangeableWrapper<T>) bounds.computeIfAbsent(key, s -> {
             Invoker<?> invokerDelegete = new InvokerDelegate<>(originInvoker, providerUrl);
             return new ExporterChangeableWrapper<>((Exporter<T>) protocol.export(invokerDelegete), originInvoker);
@@ -283,8 +288,11 @@ public class RegistryProtocol implements Protocol {
 
     private URL getRegistryUrl(Invoker<?> originInvoker) {
         URL registryUrl = originInvoker.getUrl();
+        // 协议为 registry
         if (REGISTRY_PROTOCOL.equals(registryUrl.getProtocol())) {
+            // 从url中获取key=registry的value值，假设为zookeeper
             String protocol = registryUrl.getParameter(REGISTRY_KEY, DEFAULT_DIRECTORY);
+            // 把url中的协议设置为zookeeper，并移除registry参数
             registryUrl = registryUrl.setProtocol(protocol).removeParameter(REGISTRY_KEY);
         }
         return registryUrl;
@@ -373,6 +381,7 @@ public class RegistryProtocol implements Protocol {
                 return doRefer(getMergeableCluster(), registry, type, url);
             }
         }
+        // 集群，注册中心，要引用的类，注册中心的url
         return doRefer(cluster, registry, type, url);
     }
 
@@ -388,6 +397,7 @@ public class RegistryProtocol implements Protocol {
         directory.setProtocol(protocol);
         // all attributes of REFER_KEY
         Map<String, String> parameters = new HashMap<String, String>(directory.getUrl().getParameters());
+        // 构建订阅的url
         URL subscribeUrl = new URL(CONSUMER_PROTOCOL, parameters.remove(REGISTER_IP_KEY), 0, type.getName(), parameters);
         if (!ANY_VALUE.equals(url.getServiceInterface()) && url.getParameter(REGISTER_KEY, true)) {
             directory.setRegisteredConsumerUrl(getRegisteredConsumerUrl(subscribeUrl, url));

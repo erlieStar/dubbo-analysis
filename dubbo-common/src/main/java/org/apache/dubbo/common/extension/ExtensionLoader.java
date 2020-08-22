@@ -932,6 +932,8 @@ public class ExtensionLoader<T> {
         // 可以用Arthas来看生成的代码
         // sc 查看加载的类
         // jad 反编译生成的类
+
+        // 生成代理类对应的代码
         String code = new AdaptiveClassCodeGenerator(type, cachedDefaultName).generate();
         ClassLoader classLoader = findClassLoader();
         org.apache.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(org.apache.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();

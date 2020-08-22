@@ -416,6 +416,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                         enabled = url.getParameter(Constants.ENABLED_KEY, true);
                     }
                     if (enabled) {
+                        // 通过调用protocol.refer()将url转为invoker，这里的protocol默认为DubboProtocol
                         // 依次执行
                         // InvokerDelegate
                         // ConsumerContextFilter

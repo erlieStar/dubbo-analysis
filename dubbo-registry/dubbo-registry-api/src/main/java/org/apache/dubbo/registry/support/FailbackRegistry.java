@@ -39,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * FailbackRegistry. (SPI, Prototype, ThreadSafe)
+ *
+ * 失败重试的注册中心
  */
 public abstract class FailbackRegistry extends AbstractRegistry {
 
@@ -72,6 +74,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         this.retryPeriod = url.getParameter(Constants.REGISTRY_RETRY_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RETRY_PERIOD);
 
         // since the retry task will not be very much. 128 ticks is enough.
+        // 每隔5s执行一次失败重试的定时器
         retryTimer = new HashedWheelTimer(new NamedThreadFactory("DubboRegistryRetryTimer", true), retryPeriod, TimeUnit.MILLISECONDS, 128);
     }
 
@@ -226,6 +229,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         return failedNotified;
     }
 
+    /**
+     * 注册
+     */
     @Override
     public void register(URL url) {
         super.register(url);
@@ -256,6 +262,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * 注销
+     */
     @Override
     public void unregister(URL url) {
         super.unregister(url);
@@ -286,6 +295,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * 订阅
+     */
     @Override
     public void subscribe(URL url, NotifyListener listener) {
         super.subscribe(url, listener);
@@ -320,6 +332,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * 退订
+     */
     @Override
     public void unsubscribe(URL url, NotifyListener listener) {
         super.unsubscribe(url, listener);

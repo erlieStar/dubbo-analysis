@@ -78,6 +78,7 @@ public class HttpProtocol extends AbstractProxyProtocol {
         String addr = getAddr(url);
         HttpServer server = serverMap.get(addr);
         if (server == null) {
+            // 启动一个tomcat或者jetty，并用InternalHandler来接收请求
             server = httpBinder.bind(url, new InternalHandler());
             serverMap.put(addr, server);
         }
@@ -195,6 +196,9 @@ public class HttpProtocol extends AbstractProxyProtocol {
         return super.getErrorCode(e);
     }
 
+    /**
+     * 接受请求的处理器，
+     */
     private class InternalHandler implements HttpHandler {
 
         @Override

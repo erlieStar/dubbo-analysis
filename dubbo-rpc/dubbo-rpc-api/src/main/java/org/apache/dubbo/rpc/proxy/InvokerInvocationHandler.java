@@ -59,6 +59,9 @@ public class InvokerInvocationHandler implements InvocationHandler {
             return invoker.equals(args[0]);
         }
         // 将 method 和 args 封装到 RpcInvocation 中，并执行后续的调用
+        // 默认是DubboInvoker
+        // 会依次执行 AbstractInvoker#invoke
+        // DubboInvoker#doInvoke
         return invoker.invoke(createInvocation(method, args)).recreate();
     }
 

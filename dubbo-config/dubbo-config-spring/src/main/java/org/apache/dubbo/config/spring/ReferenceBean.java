@@ -45,6 +45,7 @@ import java.util.Map;
 
 /**
  * ReferenceFactoryBean
+ * 是一个工厂Bean，会调用getObject()方法
  */
 public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean, ApplicationContextAware, InitializingBean, DisposableBean {
 

@@ -39,6 +39,8 @@ public interface RegistryService {
      * 5. Allow URLs which have the same URL but different parameters to coexist,they can't cover each other.<br>
      *
      * @param url  Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
+     *
+     * 注册
      */
     void register(URL url);
 
@@ -50,6 +52,8 @@ public interface RegistryService {
      * 2. Unregister according to the full url match.<br>
      *
      * @param url Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
+     *
+     * 注销
      */
     void unregister(URL url);
 
@@ -67,6 +71,8 @@ public interface RegistryService {
      *
      * @param url      Subscription condition, not allowed to be empty, e.g. consumer://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      * @param listener A listener of the change event, not allowed to be empty
+     *
+     * 订阅
      */
     void subscribe(URL url, NotifyListener listener);
 
@@ -79,6 +85,8 @@ public interface RegistryService {
      *
      * @param url      Subscription condition, not allowed to be empty, e.g. consumer://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      * @param listener A listener of the change event, not allowed to be empty
+     *
+     * 退订
      */
     void unsubscribe(URL url, NotifyListener listener);
 

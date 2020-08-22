@@ -52,6 +52,7 @@ public class ProtocolListenerWrapper implements Protocol {
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         // 暴露远程服务，不会执行filter链
+        // 有两种类型的协议，注册中心的协议，服务的协议
         if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
             return protocol.export(invoker);
         }

@@ -311,6 +311,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         }
         map.put(Constants.REGISTER_IP_KEY, hostToRegistry);
 
+        // 创建代理对象
         ref = createProxy(map);
 
         String serviceKey = URL.buildKey(interfaceName, group, version);
@@ -382,6 +383,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
             // 只有一个http地址或者注册中心地址
             if (urls.size() == 1) {
+                // RegistryProtocol
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {
                 // 多个服务注册中心
@@ -426,6 +428,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         }
         // create service proxy
         // 这个invoker是 MockClusterInvoker，然后返回MockClusterInvoker的代理类
+        // 代理对象使用jdk动态代理实现的，所以调用的时候会进入InvokerInvocationHandler#invoke方法
         return (T) proxyFactory.getProxy(invoker);
     }
 

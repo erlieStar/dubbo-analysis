@@ -33,6 +33,8 @@ import java.util.Map;
  * it will not allow to invoke remote method.
  *
  * @see Filter
+ *
+ * 用来校验token是否合法
  */
 @Activate(group = Constants.PROVIDER, value = Constants.TOKEN_KEY)
 public class TokenFilter implements Filter {

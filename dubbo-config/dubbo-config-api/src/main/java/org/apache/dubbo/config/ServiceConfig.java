@@ -544,6 +544,18 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             }
         }
         // 添加 token 到 map 中
+        // 如果用户设置了token，配置类似如下
+        // provider级别
+        // <dubbo:provider interface="com.foo.BarService" token="true" />
+        // <dubbo:provider interface="com.foo.BarService" token="123456" />
+        // service级别
+        // <dubbo:service interface="com.foo.BarService" token="true" />
+        // <dubbo:service interface="com.foo.BarService" token="123456" />
+        // 参考资料 http://dubbo.apache.org/zh-cn/docs/user/demos/token-authorization.html
+        // provider会把token作为参数，加到url中，url会被注册到注册中心
+        // consumer会从注册中心上的url中拿到token，调用的时候作为参数传到provider
+        // provider通过TokenFilter来校验token是否合法
+        // 这样做的目的是为来防止consumer绕过注册中心，直接调用provider
         if (!ConfigUtils.isEmpty(token)) {
             if (ConfigUtils.isDefault(token)) {
                 // 随机生成token
@@ -599,9 +611,13 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                             registryURL = registryURL.addParameter(Constants.PROXY_KEY, proxy);
                         }
 
+                        // registryURL是注册中心的url
+                        // 前面我们自己构建了一个服务的url
                         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
+                        // 进行包装
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
 
+                        // 从这里开始导出服务
                         // 调用了 RegistryProtocol
                         Exporter<?> exporter = protocol.export(wrapperInvoker);
                         exporters.add(exporter);

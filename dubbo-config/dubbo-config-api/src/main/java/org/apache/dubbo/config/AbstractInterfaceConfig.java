@@ -308,6 +308,8 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                     List<URL> urls = UrlUtils.parseURLs(address, map);
 
                     for (URL url : urls) {
+                        // 增加参数 registry=协议
+                        // 并且将 protocol=registry
                         url = URLBuilder.from(url)
                                 .addParameter(Constants.REGISTRY_KEY, url.getProtocol())
                                 .setProtocol(Constants.REGISTRY_PROTOCOL)

@@ -33,6 +33,8 @@ public interface ProxyFactory {
      *
      * @param invoker
      * @return proxy
+     *
+     * 针对consumer端，创建出代理对象
      */
     @Adaptive({Constants.PROXY_KEY})
     <T> T getProxy(Invoker<T> invoker) throws RpcException;
@@ -54,6 +56,8 @@ public interface ProxyFactory {
      * @param type
      * @param url
      * @return invoker
+     *
+     * 针对provider端，将服务对象包装成一个Invoker对象
      */
     @Adaptive({Constants.PROXY_KEY})
     <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) throws RpcException;

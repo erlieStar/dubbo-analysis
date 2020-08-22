@@ -69,7 +69,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
             group = Constants.PATH_SEPARATOR + group;
         }
         this.root = group;
-        // 创建 Zookeeper 客户端，默认为 CuratorZookeeperTransporter
+        // 创建 Zookeeper 客户端，默认为CuratorZookeeperTransporter，可以设置为zkClient
         zkClient = zookeeperTransporter.connect(url);
         // 添加状态监听器
         zkClient.addStateListener(state -> {
@@ -101,7 +101,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
     @Override
     public void doRegister(URL url) {
         try {
-            // 将服务注册到Zookeeper
+            // 构建路径，将服务注册到Zookeeper
             // true表示创建临时节点
             zkClient.create(toUrlPath(url), url.getParameter(Constants.DYNAMIC_KEY, true));
         } catch (Throwable e) {

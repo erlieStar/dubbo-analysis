@@ -280,6 +280,9 @@ public class DubboProtocol extends AbstractProtocol {
         URL url = invoker.getUrl();
 
         // export service.
+        // 获取服务的key
+        // 例如 org.apache.demo.DemoService:20880
+        // 将Invoker转为Exporter，并且保存在 exporterMap 中
         String key = serviceKey(url);
         DubboExporter<T> exporter = new DubboExporter<T>(invoker, key, exporterMap);
         exporterMap.put(key, exporter);
@@ -319,6 +322,7 @@ public class DubboProtocol extends AbstractProtocol {
                 synchronized (this) {
                     server = serverMap.get(key);
                     if (server == null) {
+                        // 创建服务器实例
                         serverMap.put(key, createServer(url));
                     }
                 }
@@ -404,6 +408,7 @@ public class DubboProtocol extends AbstractProtocol {
         optimizeSerialization(url);
 
         // create rpc invoker.
+        // 比较重要的方法为getClients，获取客户端
         DubboInvoker<T> invoker = new DubboInvoker<T>(serviceType, url, getClients(url), invokers);
         invokers.add(invoker);
 
@@ -595,6 +600,7 @@ public class DubboProtocol extends AbstractProtocol {
                 client = new LazyConnectExchangeClient(url, requestHandler);
 
             } else {
+                // 进行连接
                 client = Exchangers.connect(url, requestHandler);
             }
 

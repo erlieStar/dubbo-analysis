@@ -75,6 +75,7 @@ public abstract class Wrapper {
             return false;
         }
 
+        // 生成的Wrapper类会重写这个方法，在这个方法中进行远程调用
         @Override
         public Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException {
             if ("getClass".equals(mn)) {
@@ -113,8 +114,10 @@ public abstract class Wrapper {
             return OBJECT_WRAPPER;
         }
 
+        // 从缓存中获取Wrapper实例
         Wrapper ret = WRAPPER_MAP.get(c);
         if (ret == null) {
+            // 生成一个Wrapper类
             ret = makeWrapper(c);
             WRAPPER_MAP.put(c, ret);
         }
