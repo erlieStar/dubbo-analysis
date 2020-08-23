@@ -126,6 +126,7 @@ public class DubboProtocol extends AbstractProtocol {
                 }
             }
             RpcContext rpcContext = RpcContext.getContext();
+            // 用ThreadLocal来保存上下文信息
             rpcContext.setRemoteAddress(channel.getRemoteAddress());
             // 通过 Invoker 调用具体的服务
             Result result = invoker.invoke(inv);

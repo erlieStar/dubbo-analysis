@@ -81,6 +81,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         Response res = new Response(req.getId(), req.getVersion());
         // 检测请求是否合法，不合法则返回状态码为 BAD_REQUEST 的响应
         if (req.isBroken()) {
+            // 请求不合法
             Object data = req.getData();
 
             String msg;
@@ -190,6 +191,10 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         }
     }
 
+    /**
+     * 线程池任务被激活后调用了
+     * HeaderExchangeHandler#received
+     */
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
         channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());

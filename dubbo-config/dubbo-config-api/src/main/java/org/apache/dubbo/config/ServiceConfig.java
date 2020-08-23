@@ -653,6 +653,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                     .setHost(LOCALHOST_VALUE)
                     .setPort(0)
                     .build();
+            // 这里会调用InjvmProtocol#export
             Exporter<?> exporter = protocol.export(
                     proxyFactory.getInvoker(ref, (Class) interfaceClass, local));
             exporters.add(exporter);
@@ -749,7 +750,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
     private Integer findConfigedPorts(ProtocolConfig protocolConfig, String name, Map<String, String> map) {
         Integer portToBind = null;
 
-        // parse bind port from environment
+        // parse bind port rom environment
         String port = getValueFromConfig(protocolConfig, Constants.DUBBO_PORT_TO_BIND);
         portToBind = parsePort(port);
 
