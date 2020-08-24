@@ -38,6 +38,7 @@ import static org.apache.dubbo.common.utils.UrlUtils.getIdleTimeout;
 
 /**
  * DefaultMessageClient
+ * 主要增加了心跳功能
  */
 public class HeaderExchangeClient implements ExchangeClient {
 

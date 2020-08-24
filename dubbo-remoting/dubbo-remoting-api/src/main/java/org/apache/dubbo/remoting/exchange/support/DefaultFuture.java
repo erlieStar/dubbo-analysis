@@ -48,10 +48,13 @@ public class DefaultFuture implements ResponseFuture {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
+    // 通道缓存
     private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>();
 
+    // future缓存
     private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>();
 
+    // 超时检查定时器
     public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(
             new NamedThreadFactory("dubbo-future-timeout", true),
             30,
@@ -84,6 +87,7 @@ public class DefaultFuture implements ResponseFuture {
      * check time out of the future
      */
     private static void timeoutCheck(DefaultFuture future) {
+        // 创建检查任务
         TimeoutCheckTask task = new TimeoutCheckTask(future);
         TIME_OUT_TIMER.newTimeout(task, future.getTimeout(), TimeUnit.MILLISECONDS);
     }
@@ -241,6 +245,7 @@ public class DefaultFuture implements ResponseFuture {
 
         @Override
         public void run(Timeout timeout) {
+            // future为null，或者future任务已经完成，则返回
             if (future == null || future.isDone()) {
                 return;
             }
@@ -250,6 +255,7 @@ public class DefaultFuture implements ResponseFuture {
             timeoutResponse.setStatus(future.isSent() ? Response.SERVER_TIMEOUT : Response.CLIENT_TIMEOUT);
             timeoutResponse.setErrorMessage(future.getTimeoutMessage(true));
             // handle response.
+            // 把超时响应信息写到Future内的通道
             DefaultFuture.received(future.getChannel(), timeoutResponse);
 
         }

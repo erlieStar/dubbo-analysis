@@ -37,6 +37,7 @@ import org.apache.dubbo.rpc.RpcStatus;
  * </pre>
  *
  * @see Filter
+ * 进行并发控制
  */
 @Activate(group = Constants.CONSUMER, value = Constants.ACTIVES_KEY)
 public class ActiveLimitFilter implements Filter {
@@ -49,13 +50,14 @@ public class ActiveLimitFilter implements Filter {
         int max = invoker.getUrl().getMethodParameter(methodName, Constants.ACTIVES_KEY, 0);
         RpcStatus count = RpcStatus.getStatus(invoker.getUrl(), invocation.getMethodName());
         if (!count.beginCount(url, methodName, max)) {
-            // 超过并发限制
+            // 超过并发限制，超时时间默认为0
             long timeout = invoker.getUrl().getMethodParameter(invocation.getMethodName(), Constants.TIMEOUT_KEY, 0);
             long start = System.currentTimeMillis();
             long remain = timeout;
             synchronized (count) {
                 while (!count.beginCount(url, methodName, max)) {
                     try {
+                        // 等待过程中会被notify()，如果等待了remain毫秒，则下面一定会抛出异常
                         count.wait(remain);
                     } catch (InterruptedException e) {
                         // ignore

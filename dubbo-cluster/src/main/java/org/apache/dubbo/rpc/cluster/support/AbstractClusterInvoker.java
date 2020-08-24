@@ -120,6 +120,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
         // 获取调用方法名
         String methodName = invocation == null ? StringUtils.EMPTY : invocation.getMethodName();
 
+        // <dubbo:protocol name="dubbo" sticky="true">
         // 获取 sticky 配置，sticky 表示粘滞连接。所谓粘滞连接是指让服务消费者尽可能的
         // 调用同一个服务提供者，除非该提供者挂了再进行切换
         boolean sticky = invokers.get(0).getUrl()
