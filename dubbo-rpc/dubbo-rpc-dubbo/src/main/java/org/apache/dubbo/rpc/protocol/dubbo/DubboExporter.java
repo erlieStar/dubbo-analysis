@@ -27,6 +27,7 @@ import java.util.Map;
  */
 public class DubboExporter<T> extends AbstractExporter<T> {
 
+    // 这个封装的是serviceKey
     private final String key;
 
     private final Map<String, Exporter<?>> exporterMap;
@@ -37,6 +38,9 @@ public class DubboExporter<T> extends AbstractExporter<T> {
         this.exporterMap = exporterMap;
     }
 
+    /**
+     * 就是把Invoker从这个map中删除
+     */
     @Override
     public void unexport() {
         super.unexport();

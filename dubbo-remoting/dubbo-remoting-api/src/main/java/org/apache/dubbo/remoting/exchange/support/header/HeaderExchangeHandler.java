@@ -59,6 +59,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
     static void handleResponse(Channel channel, Response response) throws RemotingException {
         if (response != null && !response.isHeartbeat()) {
+            // 唤醒阻塞线程并通知结果
             DefaultFuture.received(channel, response);
         }
     }

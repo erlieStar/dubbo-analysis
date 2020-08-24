@@ -40,7 +40,9 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
         if (message.length() > 0) {
             int i = message.indexOf(' ');
             if (i > 0) {
+                // 命令
                 command = message.substring(0, i).trim();
+                // 命令后的字符串
                 message = message.substring(i + 1).trim();
             } else {
                 command = message;
@@ -50,6 +52,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
             command = "";
         }
         if (command.length() > 0) {
+            // 检查是否有命令对应的扩展点
             if (extensionLoader.hasExtension(command)) {
                 if (commandEnabled(channel.getUrl(), command)) {
                     try {
@@ -72,6 +75,7 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
             }
         }
         if (buf.length() > 0) {
+            // 追加消息结束符
             buf.append("\r\n");
         }
         if (StringUtils.isNotEmpty(prompt) && !noprompt) {

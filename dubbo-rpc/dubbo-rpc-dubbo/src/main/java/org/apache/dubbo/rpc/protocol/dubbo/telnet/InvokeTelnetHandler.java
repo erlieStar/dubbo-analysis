@@ -39,6 +39,7 @@ import static org.apache.dubbo.common.utils.PojoUtils.realize;
 
 /**
  * InvokeTelnetHandler
+ * 没有客户端，在服务器本地调用方法
  */
 @Activate
 @Help(parameter = "[service.]method(args) ", summary = "Invoke the service method.",
@@ -66,11 +67,15 @@ public class InvokeTelnetHandler implements TelnetHandler {
             return "Invalid parameters, format: service.method(args)";
         }
 
+        // 方法名
         String method = message.substring(0, i).trim();
+        // 参数值
         String args = message.substring(i + 1, message.length() - 1).trim();
         i = method.lastIndexOf(".");
         if (i >= 0) {
+            // 方法前面的接口
             service = method.substring(0, i).trim();
+            // 方法名称
             method = method.substring(i + 1).trim();
         }
 
@@ -126,6 +131,7 @@ public class InvokeTelnetHandler implements TelnetHandler {
                     long start = System.currentTimeMillis();
                     RpcResult result = new RpcResult();
                     try {
+                        // 进行方法调用
                         Object o = invokeMethod.invoke(selectedProvider.getServiceInstance(), array);
                         result.setValue(o);
                     } catch (Throwable t) {

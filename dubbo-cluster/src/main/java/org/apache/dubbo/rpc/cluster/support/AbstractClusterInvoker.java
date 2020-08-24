@@ -253,6 +253,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
         // 初始化负载均衡策略
         LoadBalance loadbalance = initLoadBalance(invokers, invocation);
         RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
+        // 具体调用过程让子类去实现
         return doInvoke(invocation, invokers, loadbalance);
     }
 
@@ -284,7 +285,9 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
     protected abstract Result doInvoke(Invocation invocation, List<Invoker<T>> invokers,
                                        LoadBalance loadbalance) throws RpcException;
 
+    // 根据Invocation获取服务提供者
     protected List<Invoker<T>> list(Invocation invocation) throws RpcException {
+        // 交给子类的doList去实现
         return directory.list(invocation);
     }
 
