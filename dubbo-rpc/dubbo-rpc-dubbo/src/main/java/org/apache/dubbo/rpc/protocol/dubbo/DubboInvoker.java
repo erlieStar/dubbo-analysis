@@ -71,9 +71,11 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         // 设置附加属性
         RpcInvocation inv = (RpcInvocation) invocation;
         final String methodName = RpcUtils.getMethodName(invocation);
+        // 设置路径，版本
         inv.setAttachment(Constants.PATH_KEY, getUrl().getPath());
         inv.setAttachment(Constants.VERSION_KEY, version);
 
+        // 获取客户端，发起实际调用
         ExchangeClient currentClient;
         if (clients.length == 1) {
             currentClient = clients[0];

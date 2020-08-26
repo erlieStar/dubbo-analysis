@@ -32,6 +32,8 @@ import java.util.List;
  * <a href="http://en.wikipedia.org/wiki/Load_balancing_(computing)">Load-Balancing</a>
  *
  * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
+ *
+ * http://dubbo.apache.org/zh-cn/blog/dubbo-loadbalance.html
  */
 @SPI(RandomLoadBalance.NAME)
 public interface LoadBalance {
@@ -39,9 +41,9 @@ public interface LoadBalance {
     /**
      * select one invoker in list.
      *
-     * @param invokers   invokers.
-     * @param url        refer url
-     * @param invocation invocation.
+     * @param invokers   invokers. 所有服务provider列表
+     * @param url        refer url 一些配置信息，比如接口名，是否check，序列化方式
+     * @param invocation invocation. rpc调用信息，包括方法名，方法参数类型，方法参数等
      * @return selected invoker.
      */
     @Adaptive("loadbalance")

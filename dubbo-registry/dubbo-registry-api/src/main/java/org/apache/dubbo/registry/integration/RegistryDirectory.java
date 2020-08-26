@@ -102,6 +102,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private volatile List<Configurator> configurators; // The initial value is null and the midway may be assigned to null, please use the local variable reference
 
     // Map<url, Invoker> cache service url to invoker mapping.
+    // 保存了 服务->Invoker 的映射关系
     private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null and the midway may be assigned to null, please use the local variable reference
     private volatile List<Invoker<T>> invokers;
 
@@ -194,7 +195,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
-     * 获取服务提供者的地址列表后会调用如下方法
+     * 订阅服务提供者的地址列表后会调用如下方法
      */
     @Override
     public synchronized void notify(List<URL> urls) {
@@ -364,6 +365,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
      *
      * @param urls
      * @return invokers
+     * 服务启动后从注册中心获取服务提供者，即url，并把url转为Invoker
      */
     private Map<String, Invoker<T>> toInvokers(List<URL> urls) {
         Map<String, Invoker<T>> newUrlInvokerMap = new HashMap<>();

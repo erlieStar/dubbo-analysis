@@ -30,12 +30,18 @@ import java.lang.reflect.Proxy;
  */
 public class JdkProxyFactory extends AbstractProxyFactory {
 
+    /**
+     * 针对consumer端，创建出代理对象
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProxy(Invoker<T> invoker, Class<?>[] interfaces) {
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), interfaces, new InvokerInvocationHandler(invoker));
     }
 
+    /**
+     * 针对provider端，将服务对象包装成一个Invoker对象
+     */
     @Override
     public <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) {
         return new AbstractProxyInvoker<T>(proxy, type, url) {
