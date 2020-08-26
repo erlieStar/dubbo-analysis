@@ -83,6 +83,9 @@ public class NettyHandler extends SimpleChannelHandler {
         }
     }
 
+    /**
+     * 接收到客户端请求的入口方法
+     */
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
         NettyChannel channel = NettyChannel.getOrAddChannel(ctx.getChannel(), url, handler);
