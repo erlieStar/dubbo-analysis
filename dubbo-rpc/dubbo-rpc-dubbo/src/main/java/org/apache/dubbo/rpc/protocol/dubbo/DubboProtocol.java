@@ -420,6 +420,12 @@ public class DubboProtocol extends AbstractProtocol {
         return invoker;
     }
 
+    /**
+     * <dubbo:reference interface="com.foo.BarService" connections="10" />
+     * 连接数的相关文章
+     * 设置多个连接数，是怕网络成为调用瓶颈
+     * https://aijishu.com/a/1060000000090540
+     */
     private ExchangeClient[] getClients(URL url) {
         // whether to share connection
 
@@ -429,6 +435,7 @@ public class DubboProtocol extends AbstractProtocol {
         int connections = url.getParameter(Constants.CONNECTIONS_KEY, 0);
         List<ReferenceCountExchangeClient> shareClients = null;
         // if not configured, connection is shared, otherwise, one connection for one service
+        // 没有配置连接数，则默认使用一个
         if (connections == 0) {
             useShareConnect = true;
 
@@ -436,6 +443,7 @@ public class DubboProtocol extends AbstractProtocol {
              * The xml configuration should have a higher priority than properties.
              */
             String shareConnectionsStr = url.getParameter(Constants.SHARE_CONNECTIONS_KEY, (String) null);
+            // 这里默认为1
             connections = Integer.parseInt(StringUtils.isBlank(shareConnectionsStr) ? ConfigUtils.getProperty(Constants.SHARE_CONNECTIONS_KEY,
                     Constants.DEFAULT_SHARE_CONNECTIONS) : shareConnectionsStr);
             shareClients = getSharedClient(url, connections);
@@ -471,6 +479,7 @@ public class DubboProtocol extends AbstractProtocol {
             return clients;
         }
 
+        // 加锁控制
         locks.putIfAbsent(key, new Object());
         synchronized (locks.get(key)) {
             clients = referenceClientMap.get(key);
@@ -601,6 +610,7 @@ public class DubboProtocol extends AbstractProtocol {
         ExchangeClient client;
         try {
             // connection should be lazy
+            // 懒加载，当真正发生请求的时候才进行连接
             if (url.getParameter(Constants.LAZY_CONNECT_KEY, false)) {
                 client = new LazyConnectExchangeClient(url, requestHandler);
 
