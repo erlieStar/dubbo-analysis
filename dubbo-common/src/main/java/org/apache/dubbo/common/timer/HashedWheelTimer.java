@@ -76,6 +76,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * and Hierarchical Timing Wheels: data structures to efficiently implement a
  * timer facility'</a>.  More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
+ *
+ * 时间轮算法：https://juejin.im/post/6844904019710722062
  */
 public class HashedWheelTimer implements Timer {
 
@@ -559,10 +561,12 @@ public class HashedWheelTimer implements Timer {
                 AtomicIntegerFieldUpdater.newUpdater(HashedWheelTimeout.class, "state");
 
         private final HashedWheelTimer timer;
+        // 实际被调度的任务
         private final TimerTask task;
         private final long deadline;
 
         @SuppressWarnings({"unused", "FieldMayBeFinal", "RedundantFieldInitialization"})
+        // 当前任务所属状态
         private volatile int state = ST_INIT;
 
         /**
@@ -575,7 +579,9 @@ public class HashedWheelTimer implements Timer {
          * This will be used to chain timeouts in HashedWheelTimerBucket via a double-linked-list.
          * As only the workerThread will act on it there is no need for synchronization / volatile.
          */
+        // 在任务链表中的后继
         HashedWheelTimeout next;
+        // 在任务链表中的前驱
         HashedWheelTimeout prev;
 
         /**
