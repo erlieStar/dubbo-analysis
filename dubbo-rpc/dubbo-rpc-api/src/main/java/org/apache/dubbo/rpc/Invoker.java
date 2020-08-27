@@ -24,6 +24,10 @@ import org.apache.dubbo.common.Node;
  * @see org.apache.dubbo.rpc.Protocol#refer(Class, org.apache.dubbo.common.URL)
  * @see org.apache.dubbo.rpc.InvokerListener
  * @see org.apache.dubbo.rpc.protocol.AbstractInvoker
+ *
+ * 本地执行的Invoker
+ * 远程通信的Invoker (DubboInvoker)
+ * 多个远程通信的Invoker聚合成的集群版的Invoker
  */
 public interface Invoker<T> extends Node {
 
