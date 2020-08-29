@@ -100,12 +100,17 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
                 return new RpcResult();
             } else if (isAsync) {
                 // 异步有返回值
+                // 同步：框架调用ResponseFuture#get()
+                // 异步：用户调用ResponseFuture#get()
                 ResponseFuture future = currentClient.request(inv, timeout);
                 // For compatibility
+                // FutureAdapter 是将ResponseFuture与jdk中的Future进行适配
+                // 当用户调用Future的get方法时，经过FutureAdapter的适配，最终会调用DefaultFuture的get方法
                 FutureAdapter<Object> futureAdapter = new FutureAdapter<>(future);
                 RpcContext.getContext().setFuture(futureAdapter);
 
                 Result result;
+                // 返回值是否是 CompletableFuture
                 if (isAsyncFuture) {
                     // register resultCallback, sometimes we need the async result being processed by the filter chain.
                     result = new AsyncRpcResult(futureAdapter, futureAdapter.getResultFuture(), false);

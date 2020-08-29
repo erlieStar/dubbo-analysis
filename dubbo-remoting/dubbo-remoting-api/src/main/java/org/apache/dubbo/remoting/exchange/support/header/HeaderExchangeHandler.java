@@ -209,6 +209,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                 if (request.isEvent()) {
                     handlerEvent(channel, request);
                 } else {
+                    // 处理普通请求
                     // 双向通信
                     if (request.isTwoWay()) {
                         // 需要有返回值

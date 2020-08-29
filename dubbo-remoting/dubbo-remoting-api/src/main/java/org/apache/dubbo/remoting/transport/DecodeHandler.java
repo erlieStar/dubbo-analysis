@@ -51,12 +51,14 @@ public class DecodeHandler extends AbstractChannelHandlerDelegate {
             decode(((Response) message).getResult());
         }
 
+        // 解码完毕后的下一站为 HeaderExchangeHandler
         handler.received(channel, message);
     }
 
     private void decode(Object message) {
         if (message != null && message instanceof Decodeable) {
             try {
+                // 执行解码逻辑
                 ((Decodeable) message).decode();
                 if (log.isDebugEnabled()) {
                     log.debug("Decode decodeable message " + message.getClass().getName());

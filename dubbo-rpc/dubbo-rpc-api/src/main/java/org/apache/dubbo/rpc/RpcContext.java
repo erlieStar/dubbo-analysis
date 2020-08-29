@@ -53,6 +53,7 @@ public class RpcContext {
      * use internal thread local to improve performance
      */
     // FIXME REQUEST_CONTEXT
+    // ThreadLocal里面有 ThreadLocalMap，key为ThreadLocal，value为范型值
     private static final InternalThreadLocal<RpcContext> LOCAL = new InternalThreadLocal<RpcContext>() {
         @Override
         protected RpcContext initialValue() {

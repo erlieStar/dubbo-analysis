@@ -17,21 +17,23 @@
 package org.apache.dubbo.demo.consumer;
 
 import org.apache.dubbo.demo.DemoService;
-
+import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ConsumerApplication {
+import java.util.concurrent.Future;
+
+public class AsyncConsumerApplication {
     /**
      * In order to make sure multicast registry works, need to specify '-Djava.net.preferIPv4Stack=true' before
      * launch the application
      */
     public static void main(String[] args) throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/dubbo-consumer.xml");
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/async-dubbo-consumer.xml");
         context.start();
-        // 通过 JdkProxyFactory 生成的代理对象，所以demoService所有的方法执行都会走 InvokerInvocationHandler#invoke
         DemoService demoService = context.getBean("demoService", DemoService.class);
-        String hello = demoService.sayHello("world");
-        System.out.println("result: " + hello);
-        System.in.read();
+        demoService.sayHello("world");
+        Future<String> future = RpcContext.getContext().getFuture();
+        // 业务线程可以开始做其他事情
+        System.out.println("result: " + future.get());
     }
 }

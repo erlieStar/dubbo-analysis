@@ -43,6 +43,7 @@ public class MockClusterInvoker<T> implements Invoker<T> {
 
     private final Directory<T> directory;
 
+    // 这里默认是 FailoverClusterInvoker
     private final Invoker<T> invoker;
 
     public MockClusterInvoker(Directory<T> directory, Invoker<T> invoker) {

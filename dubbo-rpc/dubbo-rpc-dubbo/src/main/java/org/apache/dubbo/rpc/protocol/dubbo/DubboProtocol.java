@@ -132,14 +132,16 @@ public class DubboProtocol extends AbstractProtocol {
             // 用ThreadLocal来保存上下文信息
             rpcContext.setRemoteAddress(channel.getRemoteAddress());
             // 通过 Invoker 调用具体的服务
+            // 这里是 AbstractProxyInvoker
             Result result = invoker.invoke(inv);
 
             // 异步执行
             if (result instanceof AsyncRpcResult) {
+                // thenApply相当于Stream中的map，对元素进行转换
                 return ((AsyncRpcResult) result).getResultFuture().thenApply(r -> (Object) r);
 
             } else {
-                // 同步执行
+                // 同步执行，直接设置结果返回
                 return CompletableFuture.completedFuture(result);
             }
         }

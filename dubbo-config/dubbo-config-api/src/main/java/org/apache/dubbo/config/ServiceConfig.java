@@ -620,6 +620,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                         // 从这里开始导出服务
                         // 调用了 RegistryProtocol
                         Exporter<?> exporter = protocol.export(wrapperInvoker);
+                        // 导出的服务保存在这里
                         exporters.add(exporter);
                     }
                 } else {

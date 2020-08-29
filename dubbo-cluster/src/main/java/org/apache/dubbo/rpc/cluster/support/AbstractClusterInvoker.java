@@ -242,6 +242,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
         checkWhetherDestroyed();
 
         // binding attachments into invocation.
+        // 将 RpcContext 中的属性 设置到 RpcInvocation
         Map<String, String> contextAttachments = RpcContext.getContext().getAttachments();
         if (contextAttachments != null && contextAttachments.size() != 0) {
             ((RpcInvocation) invocation).addAttachments(contextAttachments);
@@ -253,7 +254,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
         // 初始化负载均衡策略
         LoadBalance loadbalance = initLoadBalance(invokers, invocation);
         RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
-        // 具体调用过程让子类去实现
+        // 具体调用过程让子类去实现，这里默认会调用到 DubboInvoker
         return doInvoke(invocation, invokers, loadbalance);
     }
 
