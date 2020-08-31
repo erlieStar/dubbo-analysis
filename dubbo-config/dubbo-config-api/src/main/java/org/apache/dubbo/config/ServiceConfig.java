@@ -539,7 +539,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 logger.warn("No method found in service interface " + interfaceClass.getName());
                 map.put(Constants.METHODS_KEY, Constants.ANY_VALUE);
             } else {
-                // url中增加methods属性，表明可以调用的方法
+                // url中增加methods属性，表明可以调用的方法，用 , 分隔
                 map.put(Constants.METHODS_KEY, StringUtils.join(new HashSet<String>(Arrays.asList(methods)), ","));
             }
         }
@@ -642,6 +642,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 }
             }
         }
+        // 将导出服务的url保存到 List<URL> 中
         this.urls.add(url);
     }
 
@@ -655,6 +656,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                     .setPort(0)
                     .build();
             // 这里会调用InjvmProtocol#export
+            // 返回 InjvmExporter
             Exporter<?> exporter = protocol.export(
                     proxyFactory.getInvoker(ref, (Class) interfaceClass, local));
             exporters.add(exporter);

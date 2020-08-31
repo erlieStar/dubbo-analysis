@@ -26,6 +26,7 @@ import org.apache.dubbo.remoting.Dispatcher;
 public class AllDispatcher implements Dispatcher {
 
     // 线程模型名称
+    // 所有的消息都派发到业务线程池，这些消息包括请求，响应，连接，断开，心跳
     public static final String NAME = "all";
 
     @Override
