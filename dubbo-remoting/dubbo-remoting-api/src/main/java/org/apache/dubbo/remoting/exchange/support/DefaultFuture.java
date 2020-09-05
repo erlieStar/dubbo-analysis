@@ -343,6 +343,7 @@ public class DefaultFuture implements ResponseFuture {
         lock.lock();
         try {
             response = res;
+            // 有结果返回，激活阻塞获取结果的线程
             if (done != null) {
                 done.signal();
             }

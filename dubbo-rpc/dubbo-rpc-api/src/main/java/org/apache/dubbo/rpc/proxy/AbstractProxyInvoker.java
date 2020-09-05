@@ -84,6 +84,7 @@ public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
         RpcContext rpcContext = RpcContext.getContext();
         try {
             // 执行本地服务调用
+            // 这里默认会调用 JavassistProxyFactory 创建出来的 AbstractProxyInvoker
             Object obj = doInvoke(proxy, invocation.getMethodName(), invocation.getParameterTypes(), invocation.getArguments());
             if (RpcUtils.isReturnTypeFuture(invocation)) {
                 return new AsyncRpcResult((CompletableFuture<Object>) obj);

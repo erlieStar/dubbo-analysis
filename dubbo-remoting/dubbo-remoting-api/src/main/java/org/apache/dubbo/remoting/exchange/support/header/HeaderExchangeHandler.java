@@ -39,6 +39,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * ExchangeReceiver
+ * 框架内部，所有的方法调用都会被抽象成request/reponse，HeaderExchangeHandler用来处理这种场景
  */
 public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
@@ -57,6 +58,9 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         this.handler = handler;
     }
 
+    /**
+     * 处理响应
+     */
     static void handleResponse(Channel channel, Response response) throws RemotingException {
         if (response != null && !response.isHeartbeat()) {
             // 唤醒阻塞线程并通知结果
@@ -78,6 +82,9 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         }
     }
 
+    /**
+     * 处理请求报文
+     */
     void handleRequest(final ExchangeChannel channel, Request req) throws RemotingException {
         Response res = new Response(req.getId(), req.getVersion());
         // 检测请求是否合法，不合法则返回状态码为 BAD_REQUEST 的响应
@@ -198,6 +205,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
      */
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
+        // 更新时间戳
         channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());
         final ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
         try {
@@ -222,7 +230,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
             } else if (message instanceof Response) {
                 handleResponse(channel, (Response) message);
             } else if (message instanceof String) {
-                // telnet相关
+                // 客户端不支持 telnet 调用
                 if (isClientSide(channel)) {
                     Exception e = new Exception("Dubbo client can not supported string message: " + message + " in channel: " + channel + ", url: " + channel.getUrl());
                     logger.error(e.getMessage(), e);

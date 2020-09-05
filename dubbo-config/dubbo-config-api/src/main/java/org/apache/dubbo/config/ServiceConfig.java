@@ -577,9 +577,14 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                     .getExtension(url.getProtocol()).getConfigurator(url).configure(url);
         }
 
+        // 导出本地服务
+        // <dubbo:service scope="local" />
+        // 导出远程服务
+        // <dubbo:service scope="remote" />
+        // 不导出服务
+        // <dubbo:service scope="none" />
         String scope = url.getParameter(Constants.SCOPE_KEY);
         // don't export when none is configured
-        // 不导出服务
         if (!Constants.SCOPE_NONE.equalsIgnoreCase(scope)) {
 
             // export to local if the config is not remote (export to remote only when config is remote)
@@ -597,6 +602,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 if (CollectionUtils.isNotEmpty(registryURLs)) {
                     for (URL registryURL : registryURLs) {
                         url = url.addParameterIfAbsent(Constants.DYNAMIC_KEY, registryURL.getParameter(Constants.DYNAMIC_KEY));
+                        // 获取监控中心的地址
                         URL monitorUrl = loadMonitor(registryURL);
                         if (monitorUrl != null) {
                             url = url.addParameterAndEncoded(Constants.MONITOR_KEY, monitorUrl.toFullString());

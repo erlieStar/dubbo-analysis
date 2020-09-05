@@ -89,6 +89,8 @@ public class DubboProtocol extends AbstractProtocol {
 
     /**
      * 调用本地方法，返回数据，完成一次rpc调用
+     * ExchangeHandlerAdapter 是一个 ChannelHandler
+     * 用于查找服务并调用
      */
     private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() {
 
@@ -103,6 +105,8 @@ public class DubboProtocol extends AbstractProtocol {
 
             Invocation inv = (Invocation) message;
             // 获取 Invoker 实例
+            // 服务导出的时候在 exporterMap 中保存了 serviceKey -> Exporter 的映射关系
+            // 这里根据inv得到serviceKey得到 Exporter，再得到 Invoker
             Invoker<?> invoker = getInvoker(channel, inv);
             // need to consider backward-compatibility if it's a callback
             if (Boolean.TRUE.toString().equals(inv.getAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) {
@@ -288,6 +292,7 @@ public class DubboProtocol extends AbstractProtocol {
 
         // export service.
         // 获取服务的key
+        // 服务的key的构建规则为
         // 例如 org.apache.demo.DemoService:20880
         // 将Invoker转为Exporter，并且保存在 exporterMap 中
         String key = serviceKey(url);

@@ -18,6 +18,7 @@ package org.apache.dubbo.rpc;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.ExtensionLoader;
+import org.junit.jupiter.api.Test;
 
 /**
  * TODO Comment of ProtocolUtils
@@ -41,6 +42,16 @@ public class ProtocolUtils {
 
     public static <T> Exporter<T> export(T instance, Class<T> type, URL url) {
         return protocol.export(proxy.getInvoker(instance, type, url));
+    }
+
+    @Test
+    public void test() {
+        int port = 1;
+        String serviceName = "serviceName";
+        String serviceVersion = "serviceVersion";
+        String serviceGroup = "serviceGroup";
+        String serviceKey = org.apache.dubbo.rpc.support.ProtocolUtils.serviceKey(port, serviceName, serviceVersion, serviceGroup);
+        System.out.println(serviceKey);
     }
 
 }

@@ -21,6 +21,7 @@ import org.apache.dubbo.remoting.RemotingException;
 
 /**
  * ExchangeChannel. (API/SPI, Prototype, ThreadSafe)
+ *
  */
 public interface ExchangeChannel extends Channel {
 

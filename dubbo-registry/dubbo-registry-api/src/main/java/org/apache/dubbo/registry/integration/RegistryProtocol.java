@@ -172,7 +172,7 @@ public class RegistryProtocol implements Protocol {
         URL registryUrl = getRegistryUrl(originInvoker);
         // url to export locally
         // 获取服务的url
-        // http://192.168.0.1
+        // dubbo://192.168.97.70:20880/org.apache.dubbo.demo.DemoService?anyhost=true&application=demo-provider&bean.name=org.apache.dubbo.demo.DemoService&bind.ip=192.168.97.70&bind.port=20880&default.deprecated=false&default.dynamic=false&default.register=true&deprecated=false&dubbo=2.0.2&dynamic=false&generic=false&interface=org.apache.dubbo.demo.DemoService&methods=sayHello&pid=3898&qos.port=22222&register=true&release=&side=provider&timestamp=1599290661074
         URL providerUrl = getProviderUrl(originInvoker);
 
         // Subscribe the override data
@@ -225,6 +225,7 @@ public class RegistryProtocol implements Protocol {
 
     @SuppressWarnings("unchecked")
     private <T> ExporterChangeableWrapper<T> doLocalExport(final Invoker<T> originInvoker, URL providerUrl) {
+        // 获取服务缓存的key
         String key = getCacheKey(originInvoker);
 
         // protocol.export()这个会返回实际的protocol，默认为DubboProtocol
