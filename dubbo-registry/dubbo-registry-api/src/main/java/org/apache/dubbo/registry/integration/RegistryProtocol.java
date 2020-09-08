@@ -408,6 +408,7 @@ public class RegistryProtocol implements Protocol {
         // 初始化路由规则
         directory.buildRouterChain(subscribeUrl);
         // 订阅zk的变化
+        // 从这里获取服务的信息
         directory.subscribe(subscribeUrl.addParameter(CATEGORY_KEY,
                 PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY));
         // 从服务目录选出来一个Invoker

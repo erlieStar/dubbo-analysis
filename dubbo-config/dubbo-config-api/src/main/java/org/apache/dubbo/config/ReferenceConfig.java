@@ -333,7 +333,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
     }
     @SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
     private T createProxy(Map<String, String> map) {
-        // 是否需要打开本地引用
+        // 是否是本地引用
         if (shouldJvmRefer(map)) {
             URL url = new URL(Constants.LOCAL_PROTOCOL, Constants.LOCALHOST_VALUE, 0, interfaceClass.getName()).addParameters(map);
             invoker = refprotocol.refer(interfaceClass, url);
@@ -363,12 +363,13 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                     }
                 }
             } else { // assemble URL from register center's configuration
-                // 从注册中心去拿
+                // 从注册中心去拿，一般不单独指定某个服务的url
                 // 根据服务注册中心信息转配url对象
                 checkRegistry();
                 List<URL> us = loadRegistries(false);
                 if (CollectionUtils.isNotEmpty(us)) {
                     for (URL u : us) {
+                        // 获取监测中心
                         URL monitorUrl = loadMonitor(u);
                         if (monitorUrl != null) {
                             map.put(Constants.MONITOR_KEY, URL.encode(monitorUrl.toFullString()));
@@ -428,6 +429,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         }
         // create service proxy
         // 这个invoker是 MockClusterInvoker，然后返回MockClusterInvoker的代理类
+        // proxyFactory 为 JavassistProxyFactory
         // 代理对象使用jdk动态代理实现的，所以调用的时候会进入InvokerInvocationHandler#invoke方法
         return (T) proxyFactory.getProxy(invoker);
     }
