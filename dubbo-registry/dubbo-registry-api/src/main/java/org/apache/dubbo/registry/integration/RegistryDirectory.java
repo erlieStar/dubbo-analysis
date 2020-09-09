@@ -195,6 +195,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     }
 
     /**
+     * 实现了NotifyListener接口
      * 注册中心配置发生变更
      * 订阅服务提供者的地址列表后会调用如下方法
      */
@@ -252,6 +253,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private void refreshInvoker(List<URL> invokerUrls) {
         Assert.notNull(invokerUrls, "invokerUrls should not be null");
 
+        // 协议头为empty，表示禁用所有服务
         if (invokerUrls.size() == 1
                 && invokerUrls.get(0) != null
                 && Constants.EMPTY_PROTOCOL.equals(invokerUrls.get(0).getProtocol())) {
@@ -583,6 +585,10 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         List<Invoker<T>> invokers = null;
         try {
             // Get invokers from cache, only runtime routers will be executed.
+            // 路由方式有三种，条件路由、脚本路由和标签路由
+            // 最常用的是条件路由
+            // host = 10.20.153.10 => host = 10.20.153.11
+            // 该规则表示 IP 为 10.20.153.10 的服务消费者只能调用 IP 为 10.20.153.11 机器上的服务，不可调用其他机器上的服务
             // 路由链路由之后返回的invokers
             invokers = routerChain.route(getConsumerUrl(), invocation);
         } catch (Throwable t) {

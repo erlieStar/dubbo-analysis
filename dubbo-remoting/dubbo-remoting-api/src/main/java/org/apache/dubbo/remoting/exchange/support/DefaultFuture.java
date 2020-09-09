@@ -148,6 +148,9 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * 有响应消息时会调用这个方法
+     */
     public static void received(Channel channel, Response response) {
         try {
             DefaultFuture future = FUTURES.remove(response.getId());
@@ -165,6 +168,9 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * 用户线程在发送完请求后的动作，即调用 DefaultFuture 的 get 方法等待响应对象的到来
+     */
     @Override
     public Object get() throws RemotingException {
         return get(timeout);
