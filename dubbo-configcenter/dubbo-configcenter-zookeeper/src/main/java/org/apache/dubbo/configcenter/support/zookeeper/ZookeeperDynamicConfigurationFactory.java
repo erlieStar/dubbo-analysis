@@ -26,6 +26,9 @@ import org.apache.dubbo.remoting.zookeeper.ZookeeperTransporter;
  */
 public class ZookeeperDynamicConfigurationFactory extends AbstractDynamicConfigurationFactory {
 
+    /**
+     * 和 zookeeper 交互的客户端
+     */
     private ZookeeperTransporter zookeeperTransporter;
 
     public void setZookeeperTransporter(ZookeeperTransporter zookeeperTransporter) {

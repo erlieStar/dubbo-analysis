@@ -71,8 +71,10 @@ public class Transporters {
         } else if (handlers.length == 1) {
             handler = handlers[0];
         } else {
+            // handler 数量大于1，创建一个分发器
             handler = new ChannelHandlerDispatcher(handlers);
         }
+        // 生成Client实例
         return getTransporter().connect(url, handler);
     }
 

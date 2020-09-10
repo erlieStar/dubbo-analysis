@@ -71,6 +71,12 @@ public class CacheListener implements DataListener {
     }
 
 
+    /**
+     * 节点发生变化
+     * @param path 路径
+     * @param value 值
+     * @param eventType 事件类型
+     */
     @Override
     public void dataChanged(String path, Object value, EventType eventType) {
         if (eventType == null) {
@@ -78,6 +84,7 @@ public class CacheListener implements DataListener {
         }
 
         if (eventType == EventType.INITIALIZED) {
+            // 计数器减1
             initializedLatch.countDown();
             return;
         }
@@ -108,6 +115,7 @@ public class CacheListener implements DataListener {
 
             ConfigChangeEvent configChangeEvent = new ConfigChangeEvent(key, (String) value, changeType);
             Set<ConfigurationListener> listeners = keyListeners.get(key);
+            // 给对应的listener传递事件
             if (CollectionUtils.isNotEmpty(listeners)) {
                 listeners.forEach(listener -> listener.process(configChangeEvent));
             }

@@ -20,7 +20,8 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.SPI;
 
 /**
- *
+ * 配置中心
+ * 可以使用zookeeper,nacos,etcd等
  */
 @SPI("nop")
 public interface DynamicConfigurationFactory {

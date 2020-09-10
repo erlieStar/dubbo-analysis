@@ -61,6 +61,7 @@ public class ZookeeperDynamicConfiguration implements DynamicConfiguration {
         zkClient.addDataListener(rootPath, cacheListener, executor);
         try {
             // Wait for connection
+            // 计数器变为0时，await()的线程会被唤醒
             this.initializedLatch.await();
         } catch (InterruptedException e) {
             logger.warn("Failed to build local cache for config center (zookeeper)." + url);

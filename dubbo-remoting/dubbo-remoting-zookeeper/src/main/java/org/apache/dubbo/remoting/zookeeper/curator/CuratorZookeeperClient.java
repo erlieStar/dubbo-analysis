@@ -65,6 +65,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
             if (authority != null && authority.length() > 0) {
                 builder = builder.authorization("digest", authority.getBytes());
             }
+            // 获取客户端
             client = builder.build();
             client.getConnectionStateListenable().addListener(new ConnectionStateListener() {
                 @Override
@@ -247,10 +248,16 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
         listener.unwatch();
     }
 
+    /**
+     * http://curator.apache.org/curator-framework/index.html
+     * 将 curator 中的事件转为 dubbo 中的事件
+     */
     static class CuratorWatcherImpl implements CuratorWatcher, TreeCacheListener {
 
         private CuratorFramework client;
+        // 监听子节点变化
         private volatile ChildListener childListener;
+        // 监听数据变化
         private volatile DataListener dataListener;
 
 
