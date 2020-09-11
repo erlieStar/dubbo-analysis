@@ -27,6 +27,8 @@ import java.net.InetSocketAddress;
  * @see org.apache.dubbo.remoting.Channel
  * @see org.apache.dubbo.remoting.Client
  * @see org.apache.dubbo.remoting.Server
+ *
+ * https://segmentfault.com/a/1190000017274525
  */
 public interface Endpoint {
 
