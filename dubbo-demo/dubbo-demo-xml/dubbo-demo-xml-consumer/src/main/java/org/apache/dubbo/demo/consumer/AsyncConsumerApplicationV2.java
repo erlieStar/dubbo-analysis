@@ -31,7 +31,9 @@ public class AsyncConsumerApplicationV2 {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/async-dubbo-consumer.xml");
         context.start();
         DemoService demoService = context.getBean("demoService", DemoService.class);
-        demoService.sayHello("world");
+        String result = demoService.sayHello("world");
+        // null
+        System.out.println(result);
         CompletableFuture<String> future = RpcContext.getContext().getCompletableFuture();
         future.whenComplete((v, t) -> {
             if (t != null) {
