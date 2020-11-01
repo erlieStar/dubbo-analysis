@@ -46,10 +46,13 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    // 业务接口类型
     private final Class<T> type;
 
+    // 与当前Invoker关联的URL对象，包含了全部的配置信息
     private final URL url;
 
+    // 当前Invoker关联的一些附加信息
     private final Map<String, String> attachment;
 
     private volatile boolean available = true;
@@ -135,6 +138,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         }
         RpcInvocation invocation = (RpcInvocation) inv;
         invocation.setInvoker(this);
+        // 将attachment集合添加为Invocation的附加信息
         if (CollectionUtils.isNotEmptyMap(attachment)) {
             invocation.addAttachmentsIfAbsent(attachment);
         }

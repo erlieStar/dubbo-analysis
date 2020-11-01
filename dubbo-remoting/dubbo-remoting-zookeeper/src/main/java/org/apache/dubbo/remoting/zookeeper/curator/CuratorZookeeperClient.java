@@ -251,6 +251,8 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
     /**
      * http://curator.apache.org/curator-framework/index.html
      * 将 curator 中的事件转为 dubbo 中的事件
+     * CuratorWatcher 监听所有的事件
+     * TreeCacheListener 监听子节点的变化
      */
     static class CuratorWatcherImpl implements CuratorWatcher, TreeCacheListener {
 

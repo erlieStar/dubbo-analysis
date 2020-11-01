@@ -44,7 +44,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class DubboInvoker<T> extends AbstractInvoker<T> {
 
-    // 可以发起远程调用的客户端
+    // 可以发起远程调用的客户端，初始化的时候会设置进来
     private final ExchangeClient[] clients;
 
     private final AtomicPositiveInteger index = new AtomicPositiveInteger();
@@ -77,6 +77,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         inv.setAttachment(Constants.VERSION_KEY, version);
 
         // 获取客户端，发起实际调用
+        // 构造DubboInvoker的时候已经初始化好了
         ExchangeClient currentClient;
         if (clients.length == 1) {
             currentClient = clients[0];
@@ -95,6 +96,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
             // 不需要响应的请求
             if (isOneway) {
                 boolean isSent = getUrl().getMethodParameter(methodName, Constants.SENT_KEY, false);
+                // 发起网络调用
                 currentClient.send(inv, isSent);
                 RpcContext.getContext().setFuture(null);
                 return new RpcResult();
@@ -119,7 +121,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
                 }
                 return result;
             } else {
-                // 同步调用
+                // 同步有返回值
                 RpcContext.getContext().setFuture(null);
                 // 发送请求，得到一个 ResponseFuture 实例，并调用该实例的 get 方法进行等待
                 // 本质上还是通过异步的代码来实现同步调用

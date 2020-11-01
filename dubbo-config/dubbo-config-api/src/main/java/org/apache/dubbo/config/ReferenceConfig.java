@@ -385,6 +385,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
             // 只有一个http地址或者注册中心地址
             if (urls.size() == 1) {
                 // RegistryProtocol
+                // 生成Invoker
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {
                 // 多个服务注册中心
@@ -428,9 +429,10 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
             metadataReportService.publishConsumer(consumerURL);
         }
         // create service proxy
+        // Invoker实现代理类接口
         // 这个invoker是 MockClusterInvoker，然后返回MockClusterInvoker的代理类
         // proxyFactory 为 JavassistProxyFactory
-        // 代理对象使用jdk动态代理实现的，所以调用的时候会进入InvokerInvocationHandler#invoke方法
+        // 调用的时候会进入InvokerInvocationHandler#invoke方法
         return (T) proxyFactory.getProxy(invoker);
     }
 

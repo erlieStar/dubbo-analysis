@@ -59,6 +59,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
         if ("equals".equals(methodName) && parameterTypes.length == 1) {
             return invoker.equals(args[0]);
         }
+        // 客户端发起调用除了上述方法，都会调用invoke方法
         // 将 method 和 args 封装到 RpcInvocation 中，并执行后续的调用
         // 默认是DubboInvoker
         // 会依次执行 AbstractInvoker#invoke

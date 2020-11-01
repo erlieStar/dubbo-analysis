@@ -46,6 +46,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @export
  * @see org.apache.dubbo.rpc.filter.ContextFilter
+ * RpcContext 是线程级别的上下文信息
  */
 public class RpcContext {
 
@@ -54,6 +55,7 @@ public class RpcContext {
      */
     // FIXME REQUEST_CONTEXT
     // ThreadLocal里面有 ThreadLocalMap，key为ThreadLocal，value为范型值
+    // 发起请求，存储上下文信息
     private static final InternalThreadLocal<RpcContext> LOCAL = new InternalThreadLocal<RpcContext>() {
         @Override
         protected RpcContext initialValue() {
@@ -62,6 +64,7 @@ public class RpcContext {
     };
 
     // FIXME RESPONSE_CONTEXT
+    // 收到响应，存储上下文信息
     private static final InternalThreadLocal<RpcContext> SERVER_LOCAL = new InternalThreadLocal<RpcContext>() {
         @Override
         protected RpcContext initialValue() {

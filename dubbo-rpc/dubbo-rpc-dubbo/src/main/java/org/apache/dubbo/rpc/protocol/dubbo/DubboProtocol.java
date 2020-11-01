@@ -428,6 +428,7 @@ public class DubboProtocol extends AbstractProtocol {
     }
 
     /**
+     * 创建连接的客户端
      * <dubbo:reference interface="com.foo.BarService" connections="10" />
      * 连接数的相关文章
      * 设置多个连接数，是怕网络成为调用瓶颈

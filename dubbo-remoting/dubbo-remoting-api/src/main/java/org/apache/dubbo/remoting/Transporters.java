@@ -75,6 +75,7 @@ public class Transporters {
             handler = new ChannelHandlerDispatcher(handlers);
         }
         // 生成Client实例
+        // 默认是NettyTransporter，然后返回NettyClient，开始连接
         return getTransporter().connect(url, handler);
     }
 

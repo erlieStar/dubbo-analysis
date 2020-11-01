@@ -200,8 +200,11 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
     }
 
     /**
-     * 线程池任务被激活后调用了
+     * 客户端发送消息或者收到消息时
+     * 依次调用了如下几个channelhandler
+     * DecodeHandler#received
      * HeaderExchangeHandler#received
+     * 定义在DubboProtocol中的requestHandler（ExchangeHandlerAdapter#received）
      */
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
@@ -218,9 +221,11 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                     handlerEvent(channel, request);
                 } else {
                     // 处理普通请求
+                    // 最终的请求都会交给 DubboProtocol中的requestHandler（ExchangeHandlerAdapter#received）来处理
                     // 双向通信
                     if (request.isTwoWay()) {
-                        // 需要有返回值
+                        // 需要有返回值，形成Response返回给客户端
+                        // 直接调用DubboProtocol的ExchangeHandlerAdapter#reply
                         handleRequest(exchangeChannel, request);
                     } else {
                         // 不需要有返回值
@@ -230,6 +235,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
             } else if (message instanceof Response) {
                 handleResponse(channel, (Response) message);
             } else if (message instanceof String) {
+                // string是dubbo的telnet命令
                 // 客户端不支持 telnet 调用
                 if (isClientSide(channel)) {
                     Exception e = new Exception("Dubbo client can not supported string message: " + message + " in channel: " + channel + ", url: " + channel.getUrl());

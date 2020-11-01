@@ -83,6 +83,9 @@ final class LazyConnectExchangeClient implements ExchangeClient {
         }
     }
 
+    /**
+     * 发起请求的时候才开始初始化连接
+     */
     @Override
     public ResponseFuture request(Object request) throws RemotingException {
         warning();
