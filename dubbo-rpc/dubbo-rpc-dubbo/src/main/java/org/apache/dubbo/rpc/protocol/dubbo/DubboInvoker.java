@@ -67,6 +67,9 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         this.invokers = invokers;
     }
 
+    /**
+     * Invocation是对客户端请求信息的封装，包含了方法名，参数类型，参数
+     */
     @Override
     protected Result doInvoke(final Invocation invocation) throws Throwable {
         // 设置附加属性

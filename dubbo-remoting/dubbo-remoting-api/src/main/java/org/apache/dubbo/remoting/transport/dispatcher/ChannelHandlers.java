@@ -43,6 +43,10 @@ public class ChannelHandlers {
     }
 
     protected ChannelHandler wrapInternal(ChannelHandler handler, URL url) {
+        // handler会被如下handler再次包装
+        // MultiMessageHandler
+        // HeartbeatHandler
+        // AllChannelHandler
         return new MultiMessageHandler(new HeartbeatHandler(ExtensionLoader.getExtensionLoader(Dispatcher.class)
                 .getAdaptiveExtension().dispatch(handler, url)));
     }

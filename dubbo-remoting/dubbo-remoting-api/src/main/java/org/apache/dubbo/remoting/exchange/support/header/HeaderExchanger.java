@@ -34,6 +34,7 @@ public class HeaderExchanger implements Exchanger {
 
     public static final String NAME = "header";
 
+    // 传入的handler为DubboProtocol中的ExchangeHandlerAdapter
     // 这里将多个处理网络请求的ChannelHandler（dubbo定义的）通过装饰者模式合并为一个
     @Override
     public ExchangeClient connect(URL url, ExchangeHandler handler) throws RemotingException {

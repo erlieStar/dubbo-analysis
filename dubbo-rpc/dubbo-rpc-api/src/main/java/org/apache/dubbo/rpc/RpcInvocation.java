@@ -30,8 +30,8 @@ import java.util.Map;
  * RPC Invocation.
  *
  * @serial Don't change the class name and properties.
- *
- * 对方法，方法类型，方法参数的一些封装
+ * 客户端发起rpc调用时，需要指明调用服务端的方法，参数类型，参数等
+ * RpcInvocation就是对这些信息的封装
  */
 public class RpcInvocation implements Invocation, Serializable {
 
