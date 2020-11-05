@@ -78,6 +78,10 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
      * <p>
      * Actually，when the {@link ExtensionLoader} init the {@link Protocol} instants,it will automatically wraps two
      * layers, and eventually will get a <b>ProtocolFilterWrapper</b> or <b>ProtocolListenerWrapper</b>
+     *
+     * 获取的协议实现类会被如下类包装
+     * ProtocolFilterWrapper
+     * ProtocolListenerWrapper
      */
     private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
 
@@ -356,8 +360,10 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                             url = url.setPath(interfaceName);
                         }
                         if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
+                            // 配置的是注册中心的地址
                             urls.add(url.addParameterAndEncoded(Constants.REFER_KEY, StringUtils.toQueryString(map)));
                         } else {
+                            // 配置的是点对点的地址
                             urls.add(ClusterUtils.mergeUrl(url, map));
                         }
                     }
@@ -382,10 +388,13 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 }
             }
 
-            // 只有一个http地址或者注册中心地址
+            // 单个注册中心或服务提供者（服务直连）
             if (urls.size() == 1) {
                 // RegistryProtocol
-                // 生成Invoker
+                // 生成的invoker用了装饰者模式为，从外到里的包装为
+                // MockClusterInvoker
+                // FailoverClusterInvoker
+                // 调用的时候从注册中心拿到服务提供方信息，构造成DubboInvoker
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {
                 // 多个服务注册中心
@@ -393,6 +402,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 URL registryURL = null;
                 for (URL url : urls) {
                     // 逐个获取注册中心的服务，并添加到invokers列表中
+                    //
                     invokers.add(refprotocol.refer(interfaceClass, url));
                     if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
                         registryURL = url; // use last registry url
@@ -402,7 +412,8 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                     // use RegistryAwareCluster only when register's cluster is available
                     URL u = registryURL.addParameter(Constants.CLUSTER_KEY, RegistryAwareCluster.NAME);
                     // The invoker wrap relation would be: RegistryAwareClusterInvoker(StaticDirectory) -> FailoverClusterInvoker(RegistryDirectory, will execute route) -> Invoker
-                    // 通过cluster将多个invoker转换成一个invoker
+                    // 通过cluster将多个invoker转换成一个invoker，只暴露出一个invoker便于调用
+                    // 从里到外的包装为
                     invoker = cluster.join(new StaticDirectory(u, invokers));
                 } else { // not a registry url, must be direct invoke.
                     invoker = cluster.join(new StaticDirectory(invokers));

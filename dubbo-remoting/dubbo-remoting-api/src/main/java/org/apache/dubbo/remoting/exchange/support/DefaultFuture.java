@@ -68,6 +68,7 @@ public class DefaultFuture implements ResponseFuture {
     private final Lock lock = new ReentrantLock();
     private final Condition done = lock.newCondition();
     private final long start = System.currentTimeMillis();
+    // 客户端成功发送，sent会被赋值为成功的时间
     private volatile long sent;
     private volatile Response response;
     private volatile ResponseCallback callback;
@@ -202,6 +203,7 @@ public class DefaultFuture implements ResponseFuture {
             }
             // 等完到这肯定超时，直接抛出超时异常
             if (!isDone()) {
+                // sent > 0 表明服务端超时了，否则没有写入sent客户端超时
                 throw new TimeoutException(sent > 0, channel, getTimeoutMessage(false));
             }
         }

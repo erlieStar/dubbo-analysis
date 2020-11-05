@@ -91,6 +91,7 @@ import static org.apache.dubbo.common.utils.UrlUtils.classifyUrls;
 
 /**
  * RegistryProtocol
+ * 和协议相关类的创建都由RegistryProtocol来完成
  */
 public class RegistryProtocol implements Protocol {
 
@@ -361,6 +362,9 @@ public class RegistryProtocol implements Protocol {
         return key;
     }
 
+    /**
+     * 服务引入
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
@@ -408,7 +412,7 @@ public class RegistryProtocol implements Protocol {
         // 初始化路由规则
         directory.buildRouterChain(subscribeUrl);
         // 订阅zk的变化
-        // 从这里获取服务的信息
+        // 订阅后，RegistryProtocol会收到这几个节点的信息，触发生成DubboInvoker，即用于远程调用的Invoker
         directory.subscribe(subscribeUrl.addParameter(CATEGORY_KEY,
                 PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY));
         // 从服务目录选出来一个Invoker
