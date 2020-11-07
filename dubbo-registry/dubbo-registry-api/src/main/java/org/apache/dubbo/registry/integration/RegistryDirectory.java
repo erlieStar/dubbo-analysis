@@ -202,6 +202,9 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     @Override
     public synchronized void notify(List<URL> urls) {
         // 对不同类别的元数据进行分类
+        // configurators
+        // routers
+        // providers
         Map<String, List<URL>> categoryUrls = urls.stream()
                 .filter(Objects::nonNull)
                 .filter(this::isValidCategory)
@@ -228,6 +231,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         // providers
         // 服务提供者信息
         List<URL> providerURLs = categoryUrls.getOrDefault(PROVIDERS_CATEGORY, Collections.emptyList());
+
+        // 刷新invoker列表
         refreshOverrideAndInvoker(providerURLs);
     }
 
@@ -253,6 +258,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private void refreshInvoker(List<URL> invokerUrls) {
         Assert.notNull(invokerUrls, "invokerUrls should not be null");
 
+        // 只有一个服务提供者时
         // 协议头为empty，表示禁用所有服务
         if (invokerUrls.size() == 1
                 && invokerUrls.get(0) != null

@@ -180,8 +180,8 @@ public class RegistryProtocol implements Protocol {
         // FIXME When the provider subscribes, it will affect the scene : a certain JVM exposes the service and call
         //  the same service. Because the subscribed is cached key with the name of the service, it causes the
         //  subscription information to cover.
-        // 监听路径，因为配置会修改
         final URL overrideSubscribeUrl = getSubscribedOverrideUrl(providerUrl);
+        // 创建监听器，监听服务接口下的configurators节点，用于处理动态配置，比如dubbo-admin对集群的服务治理
         final OverrideListener overrideSubscribeListener = new OverrideListener(overrideSubscribeUrl, originInvoker);
         overrideListeners.put(overrideSubscribeUrl, overrideSubscribeListener);
 
@@ -411,8 +411,9 @@ public class RegistryProtocol implements Protocol {
         }
         // 初始化路由规则
         directory.buildRouterChain(subscribeUrl);
-        // 订阅zk的变化
-        // 订阅后，RegistryProtocol会收到这几个节点的信息，触发生成DubboInvoker，即用于远程调用的Invoker
+        // 订阅这几个节点的变化
+        // category providers configurators routers
+        // RegistryProtocol会收到这几个节点的信息，触发生成DubboInvoker，即用于远程调用的Invoker
         directory.subscribe(subscribeUrl.addParameter(CATEGORY_KEY,
                 PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY));
         // 从服务目录选出来一个Invoker

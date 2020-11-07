@@ -30,6 +30,7 @@ import java.util.List;
 
 /**
  * StaticDirectory
+ * 当使用了多注册中心时，把所有注册中心的invoker列表汇集到一个invoker列表中
  */
 public class StaticDirectory<T> extends AbstractDirectory<T> {
     private static final Logger logger = LoggerFactory.getLogger(StaticDirectory.class);

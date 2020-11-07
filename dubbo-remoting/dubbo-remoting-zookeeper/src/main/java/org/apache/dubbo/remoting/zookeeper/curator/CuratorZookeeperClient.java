@@ -279,6 +279,9 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
             this.childListener = null;
         }
 
+        /**
+         * 监听事件
+         */
         @Override
         public void process(WatchedEvent event) throws Exception {
             if (childListener != null) {
@@ -293,6 +296,9 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
             }
         }
 
+        /**
+         * 监听节点变化
+         */
         @Override
         public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
             if (dataListener != null) {

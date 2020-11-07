@@ -81,6 +81,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
      *
      * 获取的协议实现类会被如下类包装
      * ProtocolFilterWrapper
+     * QosProtocolWrapper
      * ProtocolListenerWrapper
      */
     private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
