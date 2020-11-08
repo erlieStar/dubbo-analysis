@@ -38,6 +38,7 @@ public abstract class AbstractRetryTask implements TimerTask {
 
     /**
      * url for retry task
+     * 当前任务的url
      */
     protected final URL url;
 
@@ -53,6 +54,7 @@ public abstract class AbstractRetryTask implements TimerTask {
 
     /**
      * define the most retry times
+     * 重试次数
      */
     private final int retryTimes;
 
@@ -102,6 +104,9 @@ public abstract class AbstractRetryTask implements TimerTask {
         timer.newTimeout(timeout.task(), tick, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * 根据是否被取消等来决定是否执行重试
+     */
     @Override
     public void run(Timeout timeout) throws Exception {
         if (timeout.isCancelled() || timeout.timer().isStop() || isCancel()) {

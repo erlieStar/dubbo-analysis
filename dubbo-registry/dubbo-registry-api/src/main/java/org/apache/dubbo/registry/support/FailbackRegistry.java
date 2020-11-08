@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
  * FailbackRegistry. (SPI, Prototype, ThreadSafe)
  *
  * 失败重试的注册中心
+ * 覆盖了AbstractRegistry中 register/unregister/subscribe/unsubscribe/notify 这5个核心方法
  */
 public abstract class FailbackRegistry extends AbstractRegistry {
 
@@ -63,10 +64,12 @@ public abstract class FailbackRegistry extends AbstractRegistry {
 
     /**
      * The time in milliseconds the retryExecutor will wait
+     * 重试操作的时间间隔
      */
     private final int retryPeriod;
 
     // Timer for failure retry, regular check if there is a request for failure, and if there is, an unlimited retry
+    // 执行失败重试的时间轮
     private final HashedWheelTimer retryTimer;
 
     public FailbackRegistry(URL url) {
@@ -107,9 +110,11 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             return;
         }
         FailedRegisteredTask newTask = new FailedRegisteredTask(url, this);
+        // 有可能有并发，所以存在返回旧的，否则为null
         oldOne = failedRegistered.putIfAbsent(url, newTask);
         if (oldOne == null) {
             // never has a retry task. then start a new task for retry.
+            // 提交到时间轮中，等待retryPeriod毫秒后执行
             retryTimer.newTimeout(newTask, retryPeriod, TimeUnit.MILLISECONDS);
         }
     }
@@ -235,15 +240,18 @@ public abstract class FailbackRegistry extends AbstractRegistry {
     @Override
     public void register(URL url) {
         super.register(url);
+        // 清理failedRegistered集合和failedUnregistered集合
         removeFailedRegistered(url);
         removeFailedUnregistered(url);
         try {
             // Sending a registration request to the server side
+            // 真正执行注册的过程，让子类去实现
             doRegister(url);
         } catch (Exception e) {
             Throwable t = e;
 
             // If the startup detection is opened, the Exception is thrown directly.
+            // 检查check参数，决定是否直接抛出异常
             boolean check = getUrl().getParameter(Constants.CHECK_KEY, true)
                     && url.getParameter(Constants.CHECK_KEY, true)
                     && !Constants.CONSUMER_PROTOCOL.equals(url.getProtocol());
@@ -258,6 +266,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             }
 
             // Record a failed registration request to a failed list, retry regularly
+            // 如果不抛出异常，则创建失败重试的任务，添加到 failedRegistered 集合中
             addFailedRegistered(url);
         }
     }
@@ -372,6 +381,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
             throw new IllegalArgumentException("notify listener == null");
         }
         try {
+            // 调用父类AbstractRegistry#notify
             doNotify(url, listener, urls);
         } catch (Exception t) {
             // Record a failed registration request to a failed list, retry regularly

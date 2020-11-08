@@ -70,6 +70,7 @@ import static org.apache.dubbo.common.Constants.ROUTE_PROTOCOL;
 
 /**
  * RegistryDirectory
+ * 服务目录和注册中心类似，可以认为是Invoker集合，并且这个集合是动态变化的，会随注册中心的变化而进行动态调整
  */
 public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
 
@@ -158,6 +159,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         setConsumerUrl(url);
         consumerConfigurationListener.addNotifyListener(this);
         serviceConfigurationListener = new ReferenceConfigurationListener(this, url);
+        // this实现了NotifyListener接口
+        // 开始订阅，当数据发生变化的时候就会回调NotifyListener#notify方法
         registry.subscribe(url, this);
     }
 
@@ -384,12 +387,14 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
             return newUrlInvokerMap;
         }
         Set<String> keys = new HashSet<>();
+        // 获取服务消费者配置的协议
         String queryProtocols = this.queryMap.get(Constants.PROTOCOL_KEY);
         for (URL providerUrl : urls) {
             // If protocol is configured at the reference side, only the matching protocol is selected
             if (queryProtocols != null && queryProtocols.length() > 0) {
                 boolean accept = false;
                 String[] acceptProtocols = queryProtocols.split(",");
+                // 服务提供者协议被服务消费者所支持
                 for (String acceptProtocol : acceptProtocols) {
                     if (providerUrl.getProtocol().equals(acceptProtocol)) {
                         accept = true;

@@ -34,6 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * AbstractZookeeperTransporter is abstract implements of ZookeeperTransporter.
  * <p>
  * If you want to extends this, implements createZookeeperClient.
+ *
+ * 1. 缓存zookeeperClient实例
+ * 2. 在某个节点无法连接的时候，切换到备用zookeeper地址
  */
 public abstract class AbstractZookeeperTransporter implements ZookeeperTransporter {
     private static final Logger logger = LoggerFactory.getLogger(ZookeeperTransporter.class);

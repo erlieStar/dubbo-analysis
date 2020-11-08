@@ -229,7 +229,7 @@ public class RegistryProtocol implements Protocol {
         // 获取服务缓存的key
         String key = getCacheKey(originInvoker);
 
-        // protocol.export()这个会返回实际的protocol，默认为DubboProtocol
+        // java8新特性，判断指定key是否存在，不存在就会调用函数接口，计算value并放入map
         return (ExporterChangeableWrapper<T>) bounds.computeIfAbsent(key, s -> {
             Invoker<?> invokerDelegete = new InvokerDelegate<>(originInvoker, providerUrl);
             return new ExporterChangeableWrapper<>((Exporter<T>) protocol.export(invokerDelegete), originInvoker);

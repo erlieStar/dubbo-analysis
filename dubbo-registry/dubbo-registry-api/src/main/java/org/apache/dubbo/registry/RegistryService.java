@@ -73,6 +73,7 @@ public interface RegistryService {
      * @param listener A listener of the change event, not allowed to be empty
      *
      * 订阅
+     * 订阅的数据发生变化，会主动通知NotifyListener#notify方法
      */
     void subscribe(URL url, NotifyListener listener);
 

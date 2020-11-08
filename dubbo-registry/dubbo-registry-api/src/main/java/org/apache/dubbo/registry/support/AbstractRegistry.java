@@ -53,6 +53,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * AbstractRegistry. (SPI, Prototype, ThreadSafe)
+ * 主要做了本地缓存
  */
 public abstract class AbstractRegistry implements Registry {
 
@@ -306,6 +307,10 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * 与注册中心断开连接之后，会进行重连，调用recover()方法
+     * @throws Exception
+     */
     protected void recover() throws Exception {
         // register
         Set<URL> recoverRegistered = new HashSet<>(getRegistered());
