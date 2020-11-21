@@ -224,6 +224,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 }));
 
         // 配置信息，如服务降级信息
+        // 将configurators类型的url转为Configurator，保存到configurators字段中
         List<URL> configuratorURLs = categoryUrls.getOrDefault(CONFIGURATORS_CATEGORY, Collections.emptyList());
         this.configurators = Configurator.toConfigurators(configuratorURLs).orElse(this.configurators);
 

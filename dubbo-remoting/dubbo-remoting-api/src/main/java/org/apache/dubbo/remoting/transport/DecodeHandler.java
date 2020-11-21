@@ -50,7 +50,7 @@ public class DecodeHandler extends AbstractChannelHandlerDelegate {
         }
 
         if (message instanceof Response) {
-            // 对 Request 的 result 字段进行解码
+            // 对 Response 的 result 字段进行解码
             decode(((Response) message).getResult());
         }
 

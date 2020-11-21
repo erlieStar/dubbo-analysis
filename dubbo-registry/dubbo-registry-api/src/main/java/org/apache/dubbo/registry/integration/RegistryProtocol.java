@@ -399,6 +399,7 @@ public class RegistryProtocol implements Protocol {
         // 创建服务目录
         RegistryDirectory<T> directory = new RegistryDirectory<T>(type, url);
         directory.setRegistry(registry);
+        // 放入生成的Protocol$Adaptive
         directory.setProtocol(protocol);
         // all attributes of REFER_KEY
         Map<String, String> parameters = new HashMap<String, String>(directory.getUrl().getParameters());
