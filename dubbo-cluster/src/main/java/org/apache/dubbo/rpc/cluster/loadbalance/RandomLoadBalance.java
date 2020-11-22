@@ -39,10 +39,14 @@ public class RandomLoadBalance extends AbstractLoadBalance {
         // the weight of every invokers
         int[] weights = new int[length];
         // the first invoker's weight
+        // 获取第一个服务的权重
         int firstWeight = getWeight(invokers.get(0), invocation);
         weights[0] = firstWeight;
         // The sum of weights
         int totalWeight = firstWeight;
+        // 下面这个循环有两个作用
+        // 1. 计算总权重
+        // 2. 检测所有服务的权重是否相同
         for (int i = 1; i < length; i++) {
             int weight = getWeight(invokers.get(i), invocation);
             // save for later use
