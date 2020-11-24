@@ -152,8 +152,9 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         this.registry = registry;
     }
 
+
     /**
-     * 订阅服务提供者列表
+     * @param url 消费者的url
      */
     public void subscribe(URL url) {
         setConsumerUrl(url);
@@ -204,7 +205,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
      */
     @Override
     public synchronized void notify(List<URL> urls) {
-        // 对不同类别的元数据进行分类
+        // 根据Url中的protocol对数据进行分组
         // configurators
         // routers
         // providers

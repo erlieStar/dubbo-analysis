@@ -78,7 +78,7 @@ public interface RegistryService {
     void subscribe(URL url, NotifyListener listener);
 
     /**
-     * Unsubscribe
+     * Unsubscribex
      * <p>
      * Unsubscribing is required to support the contract:<br>
      * 1. If don't subscribe, ignore it directly.<br>

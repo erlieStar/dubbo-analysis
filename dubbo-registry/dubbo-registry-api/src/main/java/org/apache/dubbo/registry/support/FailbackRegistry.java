@@ -372,6 +372,11 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * @param url 消费者url
+     * @param listener listener
+     * @param urls 服务提供者url
+     */
     @Override
     protected void notify(URL url, NotifyListener listener, List<URL> urls) {
         if (url == null) {

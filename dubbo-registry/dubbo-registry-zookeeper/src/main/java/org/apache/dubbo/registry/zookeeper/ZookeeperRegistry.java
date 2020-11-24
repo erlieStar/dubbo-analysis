@@ -122,7 +122,9 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 如果interface=*，即订阅全局，对于新增和已存在的所有接口的改动都会触发回调
-     * 如果interface=特定接口，那么只有这个接口的子节点改变实，才触发回调
+     * 如果interface=特定接口，那么只有这个接口的节点及其子节点改变才触发回调
+     * @param url 消费者的url
+     * @param listener RegistryDirectory
      */
     @Override
     public void doSubscribe(final URL url, final NotifyListener listener) {
@@ -171,7 +173,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                     }
                 }
             } else {
-                // 指定service层的发起订阅，例如服务消费者的订阅
+                // 向type节点发起订阅，例如服务消费者的订阅
                 List<URL> urls = new ArrayList<>();
                 for (String path : toCategoriesPath(url)) {
                     ConcurrentMap<NotifyListener, ChildListener> listeners = zkListeners.get(url);
@@ -181,10 +183,11 @@ public class ZookeeperRegistry extends FailbackRegistry {
                     }
                     ChildListener zkListener = listeners.get(listener);
                     if (zkListener == null) {
+                        // 当type节点或者子节点发生变化时，会回调ZookeeperRegistry#notify方法
                         listeners.putIfAbsent(listener, (parentPath, currentChilds) -> ZookeeperRegistry.this.notify(url, listener, toUrlsWithEmpty(url, parentPath, currentChilds)));
                         zkListener = listeners.get(listener);
                     }
-                    // 创建type节点，该节点为持久节点
+                    // 创建type节点，该节点为持久节点（providers configurators routers）
                     zkClient.create(path, false);
                     // 向type节点发起订阅
                     List<String> children = zkClient.addChildListener(path, zkListener);
