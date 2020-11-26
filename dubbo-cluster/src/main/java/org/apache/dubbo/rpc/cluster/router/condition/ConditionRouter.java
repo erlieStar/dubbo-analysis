@@ -42,6 +42,18 @@ import java.util.regex.Pattern;
 /**
  * ConditionRouter
  *
+ * 1. scope表示路由规则的作用粒度，scope的取值会决定key的取值。必填。
+ *    service 服务粒度
+ *    application 应用粒度
+ * 2. Key明确规则体作用在哪个服务或应用。必填。
+ *    scope=service时，key取值为[{group}:]{service}[:{version}]的组合
+ *    scope=application时，key取值为application名称
+ * 3. enabled=true 当前路由规则是否生效，可不填，缺省生效。
+ * 4. force=false 当路由结果为空时，是否强制执行，如果不强制执行，路由结果为空的路由规则将自动失效，可不填，缺省为 false。
+ * 5. runtime=false 是否在每次调用时执行路由规则，否则只在提供者地址列表变更时预先执行并缓存结果，调用时直接从缓存中获取路由结果。如果用了参数路由，必须设为 true，需要注意设置会影响调用的性能，可不填，缺省为 false。
+ * 6. priority=1 路由规则的优先级，用于排序，优先级越大越靠前执行，可不填，缺省为 0。
+ * 7. conditions 定义具体的路由规则内容。必填。
+ *
  */
 public class ConditionRouter extends AbstractRouter {
     public static final String NAME = "condition";
@@ -61,8 +73,11 @@ public class ConditionRouter extends AbstractRouter {
 
     public ConditionRouter(URL url) {
         this.url = url;
+        // 优先级
         this.priority = url.getParameter(Constants.PRIORITY_KEY, 0);
+        // 是否强制执行
         this.force = url.getParameter(Constants.FORCE_KEY, false);
+        // 是否生效
         this.enabled = url.getParameter(Constants.ENABLED_KEY, true);
         init(url.getParameterAndDecoded(Constants.RULE_KEY));
     }
@@ -161,6 +176,7 @@ public class ConditionRouter extends AbstractRouter {
     @Override
     public <T> List<Invoker<T>> route(List<Invoker<T>> invokers, URL url, Invocation invocation)
             throws RpcException {
+        // 不生效
         if (!enabled) {
             return invokers;
         }
@@ -169,12 +185,12 @@ public class ConditionRouter extends AbstractRouter {
             return invokers;
         }
         try {
-            // 没有匹配规则，返回所有
+            // 没有whenRule匹配，返回所有
             if (!matchWhen(url, invocation)) {
                 return invokers;
             }
             List<Invoker<T>> result = new ArrayList<Invoker<T>>();
-            // 服务消费者在黑名单中
+            // 没有thenRule，则表明服务消费者在黑名单中，返回空列表
             if (thenCondition == null) {
                 logger.warn("The current consumer in the service blacklist. consumer: " + NetUtils.getLocalHost() + ", service: " + url.getServiceKey());
                 return result;
@@ -186,6 +202,7 @@ public class ConditionRouter extends AbstractRouter {
                 }
             }
             if (!result.isEmpty()) {
+                // result不为空，直接返回
                 return result;
             } else if (force) {
                 // result为空 force=true 强制返回空列表
@@ -195,6 +212,7 @@ public class ConditionRouter extends AbstractRouter {
         } catch (Throwable t) {
             logger.error("Failed to execute condition router rule: " + getUrl() + ", invokers: " + invokers + ", cause: " + t.getMessage(), t);
         }
+        // result为空，force=false 返回所有Invoker列表
         return invokers;
     }
 

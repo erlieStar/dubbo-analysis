@@ -305,4 +305,11 @@ public class ConditionRouterTest {
         Assertions.assertEquals(0, filteredInvokers.size());
     }
 
+    @Test
+    public void test() {
+        Router router = new ConditionRouterFactory().getRouter(getRouteUrl("host != 4.4.4.4 & host = 2.2.2.2,1.1.1.1,3.3.3.3 & method = sayHello => host = 1.2.3.4 & host != 4.4.4.4"));
+    }
+
+
+
 }

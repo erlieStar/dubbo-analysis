@@ -173,6 +173,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                     }
                 }
             } else {
+                // 如果interface=特定接口，那么只有这个接口的节点及其子节点改变才触发回调
                 // 向type节点发起订阅，例如服务消费者的订阅
                 List<URL> urls = new ArrayList<>();
                 for (String path : toCategoriesPath(url)) {
