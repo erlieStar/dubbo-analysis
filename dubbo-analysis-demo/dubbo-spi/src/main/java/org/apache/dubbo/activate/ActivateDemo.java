@@ -37,8 +37,8 @@ public class ActivateDemo {
         System.out.println();
 
         // url中有参数myfilter
-        url = URL.valueOf("test://localhost?myfilter=cache");
-        List<MyFilter> customerFilter = extensionLoader.getActivateExtension(url, "myfilter", "consumer");
+        url = URL.valueOf("test://localhost?cache=xxx&test=a");
+        List<MyFilter> customerFilter = extensionLoader.getActivateExtension(url, "", "consumer");
         /**
          * org.apache.dubbo.activate.MyConsumerFilter@53e25b76
          * org.apache.dubbo.activate.MyLogFilter@ea30797

@@ -238,12 +238,13 @@ public class ExtensionLoader<T> {
                 } else {
                     continue;
                 }
-                // 如果当前实现的组与我们传递的group匹配，且value值在url中存在
-                // group为空也会激活
+                // 如果当前实现的组与我们传递的group匹配，则返回true
+                // group为空也会返回true
                 if (isMatchGroup(group, activateGroup)) {
                     T ext = getExtension(name);
-                    // 这里为啥要排除呢？
-                    // 因为如果用户自己定义了系统的filter，这里不排除，后面加载用户自定义的又会加载，导致加载了2次，所有要排除
+                    // 1. 如果用户自己定义了系统的filter，则这里排除，这里不排除，后面加载用户自定义的又会加载，导致加载了2次
+                    // 2. 用户排除了
+                    // 3. 根据@Activate指定的value值再次过滤
                     if (!names.contains(name)
                             && !names.contains(Constants.REMOVE_VALUE_PREFIX + name)
                             && isActive(activateValue, url)) {
@@ -258,12 +259,13 @@ public class ExtensionLoader<T> {
         List<T> usrs = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
             String name = names.get(i);
-            // name前缀不为-，且之前没有排除过
+            // 不是排除的
             if (!name.startsWith(Constants.REMOVE_VALUE_PREFIX)
                     && !names.contains(Constants.REMOVE_VALUE_PREFIX + name)) {
                 // name 为 default
                 if (Constants.DEFAULT_KEY.equals(name)) {
                     if (!usrs.isEmpty()) {
+                        // 把用户自定义的放在系统之前
                         exts.addAll(0, usrs);
                         usrs.clear();
                     }
@@ -551,6 +553,7 @@ public class ExtensionLoader<T> {
     @SuppressWarnings("unchecked")
     private T createExtension(String name) {
         // 从配置文件中加载所有的扩展类
+        // 初始化 cachedWrapperClasses（包装类集合）
         // clazz为name对应的实现类
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null) {
@@ -916,6 +919,8 @@ public class ExtensionLoader<T> {
     }
 
     private Class<?> getAdaptiveExtensionClass() {
+        // 从配置文件中加载扩展类
+        // 如果类上有@Adaptive注册，则赋值给cachedAdaptiveClass
         getExtensionClasses();
         // 所有的实现类都没有Adaptive，则表示没有代理类
         // 如果有代理类，则直接返回代理类
@@ -923,6 +928,7 @@ public class ExtensionLoader<T> {
             return cachedAdaptiveClass;
         }
         // 没有手动定义代理类，帮你创建代理类
+        // 创建的过程就是用字符串拼出类的实现，然后编译，逻辑比较多，不分析了
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
 

@@ -621,12 +621,12 @@ public class DubboProtocol extends AbstractProtocol {
         ExchangeClient client;
         try {
             // connection should be lazy
-            // 懒加载，当真正发生请求的时候才进行连接
+            // 惰性加载，当真正发生请求的时候才进行连接
             if (url.getParameter(Constants.LAZY_CONNECT_KEY, false)) {
                 client = new LazyConnectExchangeClient(url, requestHandler);
 
             } else {
-                // 进行连接
+                // 及时连接
                 client = Exchangers.connect(url, requestHandler);
             }
 

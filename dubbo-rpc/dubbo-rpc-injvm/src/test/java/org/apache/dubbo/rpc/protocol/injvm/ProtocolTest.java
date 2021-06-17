@@ -24,6 +24,8 @@ import org.apache.dubbo.rpc.ProxyFactory;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,5 +70,13 @@ public class ProtocolTest {
         }
 
         assertEquals("ok2", echoProxy.echo("ok2"));
+    }
+
+    @Test
+    public void spiTest() throws IOException {
+        Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+        // org.apache.dubbo.rpc.Protocol$Adaptive@70beb599
+        System.out.println(protocol);
+        System.in.read();
     }
 }

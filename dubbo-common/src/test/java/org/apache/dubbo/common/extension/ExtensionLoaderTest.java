@@ -437,4 +437,11 @@ public class ExtensionLoaderTest {
         Assertions.assertNull(injectExtImpl.getGenericType());
     }
 
+    @Test
+    public void spiTest() {
+        ExtensionFactory extensionFactory = ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension();
+        //org.apache.dubbo.common.extension.factory.AdaptiveExtensionFactory@4abdb505
+        System.out.println(extensionFactory);
+    }
+
 }
