@@ -503,14 +503,14 @@ public class HashedWheelTimer implements Timer {
                     continue;
                 }
 
-                // 计算tick次数
+                // 从启动开始计算tick次数
                 long calculated = timeout.deadline / tickDuration;
-                // 计算剩余轮数
+                // 从启动开始计算时钟周期
                 timeout.remainingRounds = (calculated - tick) / wheel.length;
 
                 // Ensure we don't schedule for past.
                 // 确保不会是过去时间
-                // 如果任务在timeouts队列里面放久了, 以至于已经过了执行时间, 这个时候就使用当前tick,也就是放到当前bucket, 此方法调用完后就会被执行
+                // 如果任务在timeouts队列里面放久了, 以至于已经过了执行时间, 这个时候就使用当前tick，也就是放到当前bucket, 此方法调用完后就会被执行
                 final long ticks = Math.max(calculated, tick);
                 int stopIndex = (int) (ticks & mask);
 
